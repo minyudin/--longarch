@@ -1,0 +1,18 @@
+[Unit]
+Description=LongArch Smart Greenhouse Backend
+After=network.target mysql.service redis.service mosquitto.service
+
+[Service]
+Type=simple
+User=longarch
+Group=longarch
+WorkingDirectory=/opt/longarch/backend
+EnvironmentFile=/opt/longarch/.env
+ExecStart=/usr/bin/java -Xms256m -Xmx512m -jar /opt/longarch/backend/longarch.jar --spring.profiles.active=prod
+Restart=on-failure
+RestartSec=10
+StandardOutput=append:/opt/longarch/logs/backend-stdout.log
+StandardError=append:/opt/longarch/logs/backend-stderr.log
+
+[Install]
+WantedBy=multi-user.target
