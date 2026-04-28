@@ -1,0 +1,12 @@
+{
+  "ok": true,
+  "scenario": "multi_instance_consistency",
+  "deviceNo": "ACT-6E450D",
+  "samples": 10,
+  "anomalies": [],
+  "finalSnapshot": {
+    "deviceStatus": "online",
+    "networkStatus": "online",
+    "heartbeatAgeSec": 3.0
+  }
+}

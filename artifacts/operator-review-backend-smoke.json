@@ -1,0 +1,122 @@
+{
+  "base": "http://127.0.0.1:8081/api/v1",
+  "steps": [
+    {
+      "name": "adopter-login",
+      "http": 200,
+      "body": {
+        "code": 0,
+        "message": "success",
+        "data": {
+          "token": "0f036cd9-c754-4cca-94c4-ccdc46006eb6",
+          "refreshToken": "c952c117a954452397dab517117c6ebc",
+          "expiresIn": 7200,
+          "userInfo": {
+            "userId": 625,
+            "userNo": "U2048136388481695744",
+            "nickname": "用户695744",
+            "roleType": "adopter",
+            "status": 1,
+            "bindMobile": false,
+            "roleProfile": {
+              "roleName": "认养用户",
+              "roleDesc": "查看自己认养的地块数据，发起操作申请，使用AI助手"
+            },
+            "permissions": {
+              "canManageAdoptionOrder": false,
+              "canViewAuditLog": false,
+              "canManageUser": false,
+              "canTakeoverTask": false,
+              "canViewAllPlots": false,
+              "canManagePlot": false,
+              "canManageDevice": false,
+              "canCreateTask": true,
+              "canViewOwnPlot": true
+            },
+            "menuScopes": [
+              "my_adoptions",
+              "plot_detail",
+              "sensors",
+              "cameras",
+              "ai_chat",
+              "operation_tasks"
+            ]
+          }
+        },
+        "requestId": "486d03a0-1a91-4140-9d13-dec5be4435f4",
+        "serverTime": "2026-04-26 20:46:09"
+      }
+    },
+    {
+      "name": "allowed-actions",
+      "http": 200,
+      "body": {
+        "code": 0,
+        "message": "success",
+        "data": {
+          "plotId": 40017,
+          "actions": [
+            {
+              "actionType": "irrigation_apply",
+              "actionName": "申请浇水",
+              "enabled": false,
+              "reason": "设备未在线",
+              "deviceId": 80039,
+              "deviceName": "MCP-ACT-0209",
+              "requiredParams": [
+                "durationMinutes"
+              ],
+              "optionalParams": [
+                "waterVolumeLiters",
+                "flowRate"
+              ]
+            },
+            {
+              "actionType": "fertilize_apply",
+              "actionName": "申请施肥",
+              "enabled": false,
+              "reason": "当前权限不允许",
+              "deviceId": 80039,
+              "deviceName": "MCP-ACT-0209",
+              "requiredParams": [
+                "durationMinutes",
+                "fertilizerType"
+              ],
+              "optionalParams": [
+                "concentrationPercent",
+                "volumeLiters"
+              ]
+            },
+            {
+              "actionType": "spray_apply",
+              "actionName": "申请喷淋",
+              "enabled": false,
+              "reason": "当前权限不允许",
+              "deviceId": 80039,
+              "deviceName": "MCP-ACT-0209",
+              "requiredParams": [
+                "durationMinutes"
+              ],
+              "optionalParams": [
+                "sprayType",
+                "pressureBar"
+              ]
+            }
+          ]
+        },
+        "requestId": "81a93a8e-2134-4e95-a94b-4de50941d892",
+        "serverTime": "2026-04-26 20:46:09"
+      }
+    },
+    {
+      "name": "create-task",
+      "http": 200,
+      "body": {
+        "code": 40013,
+        "message": "设备未在线，暂不可执行该操作",
+        "requestId": "8393721f-3ae6-4d5d-b0b0-487a21c15418",
+        "serverTime": "2026-04-26 20:46:09"
+      }
+    }
+  ]
+}

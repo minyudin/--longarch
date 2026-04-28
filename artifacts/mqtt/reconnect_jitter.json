@@ -1,0 +1,24 @@
+{
+  "ok": true,
+  "scenario": "reconnect_jitter",
+  "deviceNo": "ACT-6E450D",
+  "violations": [],
+  "afterJitter": {
+    "device_status": "online",
+    "network_status": "online",
+    "last_heartbeat_at": "2026-04-26 01:33:45",
+    "updated_at": "2026-04-26 01:32:57"
+  },
+  "afterOfflineWait": {
+    "device_status": "offline",
+    "network_status": "offline",
+    "last_heartbeat_at": "2026-04-26 01:33:45",
+    "updated_at": "2026-04-26 01:35:57"
+  },
+  "afterRecovery": {
+    "device_status": "online",
+    "network_status": "online",
+    "last_heartbeat_at": "2026-04-26 01:36:19",
+    "updated_at": "2026-04-26 01:35:57"
+  }
+}

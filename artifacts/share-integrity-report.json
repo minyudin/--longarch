@@ -1,0 +1,325 @@
+{
+  "base": "http://127.0.0.1:8081/api/v1",
+  "ownerOpenId": "stub_prod-ai-user-v5",
+  "checks": [
+    {
+      "name": "owner-dev-login",
+      "http": 200,
+      "body": {
+        "code": 0,
+        "message": "success",
+        "data": {
+          "token": "0f036cd9-c754-4cca-94c4-ccdc46006eb6",
+          "refreshToken": "e6af5d02b74d460c93f62fd714b075d5",
+          "expiresIn": 7200,
+          "userInfo": {
+            "userId": 625,
+            "userNo": "U2048136388481695744",
+            "nickname": "用户695744",
+            "roleType": "adopter",
+            "status": 1,
+            "bindMobile": false,
+            "roleProfile": {
+              "roleName": "认养用户",
+              "roleDesc": "查看自己认养的地块数据，发起操作申请，使用AI助手"
+            },
+            "permissions": {
+              "canManageAdoptionOrder": false,
+              "canViewAuditLog": false,
+              "canManageUser": false,
+              "canTakeoverTask": false,
+              "canViewAllPlots": false,
+              "canManagePlot": false,
+              "canManageDevice": false,
+              "canCreateTask": true,
+              "canViewOwnPlot": true
+            },
+            "menuScopes": [
+              "my_adoptions",
+              "plot_detail",
+              "sensors",
+              "cameras",
+              "ai_chat",
+              "operation_tasks"
+            ]
+          }
+        },
+        "requestId": "32e3bfb7-212a-404c-bd77-c4640f4e8767",
+        "serverTime": "2026-04-26 20:15:04"
+      }
+    },
+    {
+      "name": "owner-my-shares",
+      "http": 200,
+      "body": {
+        "code": 0,
+        "message": "success",
+        "data": [
+          {
+            "codeId": 10675,
+            "code": "LSGJ-S-D5228F78",
+            "codeType": "share",
+            "plotId": 40017,
+            "orderId": 20051,
+            "createdByUserId": 625,
+            "status": "active",
+            "validFrom": "2026-04-26 20:14:52",
+            "validTo": "2026-04-28 20:14:52",
+            "dailyAccessStart": "00:00",
+            "dailyAccessEnd": "23:59:59",
+            "canViewLive": 1,
+            "canViewHistory": 1,
+            "historyDays": 15,
+            "canViewSensor": 1,
+            "canOperate": 1,
+            "operationWhitelist": "[\"irrigation_apply\"]",
+            "maxDailyOperations": 50,
+            "createdAt": "2026-04-26 20:14:52"
+          },
+          {
+            "codeId": 10674,
+            "code": "LSGJ-S-385A17C5",
+            "codeType": "share",
+            "plotId": 40017,
+            "orderId": 20051,
+            "createdByUserId": 625,
+            "bindUserId": 629,
+            "status": "active",
+            "validFrom": "2026-04-26 19:31:48",
+            "validTo": "2026-05-03 19:31:48",
+            "dailyAccessStart": "00:00",
+            "dailyAccessEnd": "23:59:59",
+            "canViewLive": 1,
+            "canViewHistory": 1,
+            "historyDays": 15,
+            "canViewSensor": 1,
+            "canOperate": 1,
+            "operationWhitelist": "[\"irrigation_apply\"]",
+            "maxDailyOperations": 50,
+            "createdAt": "2026-04-26 19:31:48"
+          },
+          {
+            "codeId": 10673,
+            "code": "LSGJ-S-AF7D4ABF",
+            "codeType": "share",
+            "plotId": 40017,
+            "orderId": 20051,
+            "createdByUserId": 625,
+            "bindUserId": 628,
+            "status": "active",
+            "validFrom": "2026-04-26 19:30:35",
+            "validTo": "2026-05-03 19:30:35",
+            "dailyAccessStart": "00:00",
+            "dailyAccessEnd": "23:59:59",
+            "canViewLive": 1,
+            "canViewHistory": 1,
+            "historyDays": 15,
+            "canViewSensor": 1,
+            "canOperate": 1,
+            "operationWhitelist": "[\"irrigation_apply\"]",
+            "maxDailyOperations": 50,
+            "createdAt": "2026-04-26 19:30:35"
+          }
+        ],
+        "requestId": "e5150483-0e0d-4490-9e42-e6cd03d55125",
+        "serverTime": "2026-04-26 20:15:04"
+      }
+    },
+    {
+      "name": "create-share",
+      "http": 200,
+      "body": {
+        "code": 0,
+        "message": "success",
+        "data": {
+          "codeId": 10676,
+          "code": "LSGJ-S-07144AEB",
+          "codeType": "share",
+          "plotId": 40017,
+          "orderId": 20051,
+          "createdByUserId": 625,
+          "status": "active",
+          "validFrom": "2026-04-26 20:15:04",
+          "validTo": "2026-04-28 20:15:04",
+          "dailyAccessStart": "00:00",
+          "dailyAccessEnd": "23:59:59",
+          "canViewLive": 1,
+          "canViewHistory": 1,
+          "historyDays": 15,
+          "canViewSensor": 1,
+          "canOperate": 1,
+          "operationWhitelist": "[\"irrigation_apply\"]",
+          "maxDailyOperations": 50,
+          "createdAt": "2026-04-26 20:15:04"
+        },
+        "requestId": "520d2fbe-6f75-483f-b3e2-ff78c730e65a",
+        "serverTime": "2026-04-26 20:15:04"
+      }
+    },
+    {
+      "name": "verify-created-code",
+      "http": 200,
+      "body": {
+        "code": 0,
+        "message": "success",
+        "data": {
+          "valid": true,
+          "codeType": "share",
+          "status": "active",
+          "orderId": 20051,
+          "plotId": 40017,
+          "validFrom": "2026-04-26 20:15:04",
+          "validTo": "2026-04-28 20:15:04",
+          "dailyAccessStart": "00:00",
+          "dailyAccessEnd": "23:59:59",
+          "permissions": {
+            "canViewLive": true,
+            "canViewHistory": true,
+            "historyDays": 15,
+            "canViewSensor": true,
+            "canOperate": true,
+            "operationWhitelist": [
+              "irrigation_apply"
+            ],
+            "maxDailyOperations": 50,
+            "shareable": false
+          }
+        },
+        "requestId": "5997eb7f-034e-4c58-aca9-7db63288988c",
+        "serverTime": "2026-04-26 20:15:04"
+      }
+    },
+    {
+      "name": "guest-login-valid",
+      "http": 200,
+      "body": {
+        "code": 0,
+        "message": "success",
+        "data": {
+          "token": "d1ef8579-223f-4e29-a0b8-a4046a8cc7ea",
+          "refreshToken": "9cd5bf8d0d884b2ea1989b42539acfc8",
+          "expiresIn": 7200,
+          "userInfo": {
+            "userId": 631,
+            "userNo": "U2048375304950390784",
+            "nickname": "游客390784",
+            "roleType": "guest",
+            "status": 1,
+            "bindMobile": false,
+            "roleProfile": {
+              "roleName": "游客/分享访问者",
+              "roleDesc": "查看分享范围内的地块基础信息和有限数据"
+            },
+            "permissions": {
+              "canManageAdoptionOrder": false,
+              "canViewAuditLog": false,
+              "canManageUser": false,
+              "canTakeoverTask": false,
+              "canViewAllPlots": false,
+              "canManagePlot": false,
+              "canManageDevice": false,
+              "canCreateTask": false,
+              "canViewOwnPlot": true
+            },
+            "menuScopes": [
+              "plot_detail",
+              "sensors",
+              "cameras"
+            ]
+          }
+        },
+        "requestId": "a77a573f-7c97-4651-8014-b401ac953532",
+        "serverTime": "2026-04-26 20:15:04"
+      }
+    },
+    {
+      "name": "guest-scope-own-plot",
+      "http": 200,
+      "body": {
+        "code": 0,
+        "message": "success",
+        "data": {
+          "plotId": 40017,
+          "orderId": 20051,
+          "visibility": {
+            "canViewPlotInfo": true,
+            "canViewLiveVideo": true,
+            "canViewHistoryVideo": true,
+            "historyDays": 15,
+            "canViewSensorData": true,
+            "canViewOperationLog": true,
+            "canViewAiAnalysis": true
+          },
+          "operation": {
+            "canOperate": true,
+            "operationWhitelist": [
+              "irrigation_apply"
+            ],
+            "maxDailyOperations": 50,
+            "canReserveTask": true,
+            "canCancelPendingTask": true
+          },
+          "timeWindow": {
+            "validFrom": "2026-04-26 20:15:04",
+            "validTo": "2026-04-28 20:15:04",
+            "dailyAccessStart": "00:00",
+            "dailyAccessEnd": "23:59:59"
+          }
+        },
+        "requestId": "30ac942a-4191-4741-a01e-9f8f10f38d51",
+        "serverTime": "2026-04-26 20:15:04"
+      }
+    },
+    {
+      "name": "guest-scope-other-plot",
+      "http": 200,
+      "body": {
+        "code": 40012,
+        "message": "无该地块访问权限",
+        "requestId": "fea9e52f-7317-4658-999d-936bddd60db9",
+        "serverTime": "2026-04-26 20:15:04"
+      }
+    },
+    {
+      "name": "guest-login-invalid-code",
+      "http": 200,
+      "body": {
+        "code": 40009,
+        "message": "分享码无效或已过期",
+        "requestId": "f67ebffb-a1dc-43ad-8632-f26bd1b7ed19",
+        "serverTime": "2026-04-26 20:15:04"
+      }
+    },
+    {
+      "name": "revoke-created-share",
+      "http": 200,
+      "body": {
+        "code": 0,
+        "message": "success",
+        "requestId": "fa60d622-ab2c-4eab-a45d-bc02d6f09fc3",
+        "serverTime": "2026-04-26 20:15:04"
+      }
+    },
+    {
+      "name": "verify-revoked-code",
+      "http": 200,
+      "body": {
+        "code": 40009,
+        "message": "认养码已失效",
+        "requestId": "6cb8409d-751f-43ce-abac-c07670ce0e9e",
+        "serverTime": "2026-04-26 20:15:04"
+      }
+    },
+    {
+      "name": "guest-login-revoked-code",
+      "http": 200,
+      "body": {
+        "code": 40009,
+        "message": "分享码无效或已过期",
+        "requestId": "f5b676c1-ffe4-44fb-a411-bd5b9a3f4fe6",
+        "serverTime": "2026-04-26 20:15:04"
+      }
+    }
+  ],
+  "errors": []
+}
