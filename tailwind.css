@@ -1,0 +1,20 @@
+@import "tailwindcss" layer(utilities);
+
+@theme {
+  /* Figma RecehTok 设计 token */
+  --color-dark-base: #17153a;
+  --color-dark-surface: #1a1740;
+  --color-dark-card: rgba(49, 47, 98, 0.35);
+  --color-dark-border: #312f62;
+  --color-neon-cyan: #40ddff;
+  --color-neon-cyan-deep: #0b98c5;
+  --color-neon-pink: #ff409a;
+  --color-neon-purple: #c438ef;
+  --color-neon-green: #2ecc71;
+  --color-neon-orange: #f39c12;
+  --color-neon-yellow: #f1c40f;
+  --color-text-primary: rgba(255, 255, 255, 0.9);
+  --color-text-secondary: #b1afcd;
+  --color-text-muted: #6f6c99;
+  --color-text-dim: #5b5a99;
+}
