@@ -1,0 +1,73 @@
+// ═══════════════════════════════════════════════════════════════
+// GreenhouseSwitcher — 大棚切换器
+// ═══════════════════════════════════════════════════════════════
+.gh-switcher {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.gh-switcher__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: rgba(0, 255, 136, 0.04);
+  color: var(--text-secondary);
+  font-family: var(--font-code);
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+
+  &:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: rgba(0, 255, 136, 0.08);
+  }
+
+  &--active {
+    border-color: var(--primary);
+    color: var(--bg-dark);
+    background: var(--gradient-1);
+    box-shadow: 0 0 12px rgba(0, 255, 136, 0.3);
+    font-weight: 700;
+
+    &:hover {
+      color: var(--bg-dark);
+    }
+  }
+
+  svg {
+    flex-shrink: 0;
+    opacity: 0.7;
+  }
+}
+
+.gh-switcher__name {
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gh-switcher__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: rgba(0, 255, 136, 0.15);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.gh-switcher__btn--active .gh-switcher__count {
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--bg-dark);
+}

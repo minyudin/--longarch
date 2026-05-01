@@ -1,0 +1,49 @@
+// ═══════════════════════════════════════════════════════════════
+// Design Tokens — 完整沿用 Elite Cybersecurity Portfolio 样式体系
+// ═══════════════════════════════════════════════════════════════
+
+:root {
+  // ── 色彩 ──────────────────────────────────────────────────
+  --primary: #00ff88;
+  --secondary: #00d4ff;
+  --accent: #ff6b6b;
+  --success: #51cf66;
+  --warning: #ffd43b;
+  --danger: #ff4757;
+
+  // ── 背景 ──────────────────────────────────────────────────
+  --bg-dark: #0a0e1a;
+  --bg-darker: #050810;
+  --bg-card: #0f1419;
+  --bg-hover: #1a1f2e;
+
+  // ── 边框 & 文字 ──────────────────────────────────────────
+  --border: #1e293b;
+  --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  // ── 渐变 ──────────────────────────────────────────────────
+  --gradient-1: linear-gradient(135deg, #00ff88 0%, #00d4ff 100%);
+  --gradient-2: linear-gradient(135deg, #00d4ff 0%, #00ff88 100%);
+
+  // ── 阴影 ──────────────────────────────────────────────────
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.3);
+  --shadow-glow: 0 0 30px rgba(0, 255, 136, 0.3);
+  --shadow-glow-strong: 0 0 50px rgba(0, 255, 136, 0.5);
+
+  // ── 过渡 ──────────────────────────────────────────────────
+  --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  // ── 字体 ──────────────────────────────────────────────────
+  --font-primary: "Tajawal", sans-serif;
+  --font-code: "Fira Code", monospace;
+  --font-tech: "Orbitron", monospace;
+
+  // ── 大屏尺寸 ─────────────────────────────────────────────
+  --screen-w: 1920px;
+  --screen-h: 1080px;
+}
