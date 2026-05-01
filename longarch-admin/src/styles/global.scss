@@ -1,0 +1,246 @@
+/* ============================================================
+   全局设计 Token — 源自 Figma RecehTok Crypto Dashboard
+   ============================================================ */
+:root {
+  --bg-base: #17153a;
+  --bg-gradient: radial-gradient(ellipse at top right, #201d47 0%, #17153a 100%);
+  --bg-sidebar: #1a1740;
+  --bg-card: rgba(49, 47, 98, 0.3);
+  --bg-card-solid: #1e1b4b;
+  --border-color: rgba(49, 47, 98, 0.6);
+  --border-focus: rgba(64, 221, 255, 0.4);
+  --color-primary: #40ddff;
+  --color-primary-deep: #0b98c5;
+  --color-accent: #ff409a;
+  --color-accent-end: #c438ef;
+  --color-success: #2ecc71;
+  --color-warning: #f39c12;
+  --color-danger: #ff409a;
+  --text-white: rgba(255, 255, 255, 0.9);
+  --text-secondary: #b1afcd;
+  --text-muted: #6f6c99;
+  --text-dim: #5b5a99;
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.25);
+  --shadow-glow-cyan: 0 0 30px rgba(64, 221, 255, 0.15);
+  --shadow-glow-pink: 0 4px 28px rgba(186, 19, 88, 0.4);
+  --radius: 12px;
+  --radius-lg: 16px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', Arial, sans-serif;
+  background: var(--bg-gradient);
+  background-attachment: fixed;
+  color: var(--text-white);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* ============================================================
+   Element Plus — 全面暗色覆盖
+   ============================================================ */
+
+/* --- 按钮 --- */
+.el-button {
+  --el-button-bg-color: rgba(49, 47, 98, 0.5);
+  --el-button-border-color: #312f62;
+  --el-button-text-color: #b1afcd;
+  --el-button-hover-bg-color: rgba(64, 221, 255, 0.08);
+  --el-button-hover-border-color: rgba(64, 221, 255, 0.3);
+  --el-button-hover-text-color: #40ddff;
+  border-radius: 8px !important;
+}
+.el-button--primary {
+  background: linear-gradient(135deg, #40ddff, #0b98c5) !important;
+  border: none !important;
+  color: #fff !important;
+  box-shadow: 0 2px 12px rgba(64, 221, 255, 0.2);
+  &:hover { box-shadow: 0 4px 18px rgba(64, 221, 255, 0.3); }
+}
+.el-button--danger {
+  background: linear-gradient(135deg, #ff409a, #c438ef) !important;
+  border: none !important;
+  color: #fff !important;
+}
+
+/* --- 输入框 / 选择器 --- */
+.el-input__wrapper, .el-select__wrapper, .el-textarea__inner {
+  background-color: rgba(49, 47, 98, 0.4) !important;
+  border: 1px solid rgba(49, 47, 98, 0.6) !important;
+  box-shadow: none !important;
+  border-radius: 8px !important;
+  transition: border-color 0.2s ease !important;
+  &:hover, &:focus-within, &.is-focus {
+    border-color: var(--border-focus) !important;
+  }
+}
+.el-input__inner { color: var(--text-white) !important; }
+.el-input__inner::placeholder { color: #5b5a99 !important; }
+.el-input .el-input__prefix .el-icon { color: #6f6c99; }
+
+/* --- 表格 --- */
+.el-table {
+  --el-table-bg-color: transparent !important;
+  --el-table-tr-bg-color: transparent !important;
+  --el-table-header-bg-color: rgba(49, 47, 98, 0.4) !important;
+  --el-table-row-hover-bg-color: rgba(64, 221, 255, 0.04) !important;
+  --el-table-border-color: rgba(49, 47, 98, 0.5) !important;
+  --el-table-text-color: #b1afcd !important;
+  --el-table-header-text-color: #6f6c99 !important;
+  --el-table-current-row-bg-color: rgba(64, 221, 255, 0.06) !important;
+  font-size: 13px !important;
+
+  th.el-table__cell {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+  }
+}
+.el-table--striped .el-table__body tr.el-table__row--striped td.el-table__cell {
+  background: rgba(49, 47, 98, 0.15) !important;
+}
+.el-table__empty-text { color: #5b5a99 !important; }
+
+/* --- 分页 --- */
+.el-pagination {
+  --el-pagination-bg-color: transparent !important;
+  --el-pagination-text-color: #6f6c99 !important;
+  --el-pagination-button-disabled-bg-color: transparent !important;
+  .el-pager li {
+    background: transparent !important;
+    color: #6f6c99 !important;
+    border-radius: 6px;
+    &.is-active {
+      background: rgba(64, 221, 255, 0.12) !important;
+      color: #40ddff !important;
+    }
+  }
+  button { background: transparent !important; color: #6f6c99 !important; }
+  .el-pagination__total { color: #5b5a99; }
+}
+
+/* --- 弹窗 --- */
+.el-dialog {
+  --el-dialog-bg-color: #1c1945 !important;
+  border: 1px solid rgba(49, 47, 98, 0.6);
+  border-radius: var(--radius-lg) !important;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+  .el-dialog__title { color: var(--text-white); font-weight: 600; }
+  .el-dialog__headerbtn .el-dialog__close { color: #6f6c99; }
+}
+.el-overlay { -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+
+/* --- 下拉菜单 --- */
+.el-dropdown__popper, .el-select-dropdown {
+  background: #1c1945 !important;
+  border: 1px solid rgba(49, 47, 98, 0.6) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4) !important;
+  .el-dropdown-menu { background: transparent; }
+  .el-dropdown-menu__item, .el-select-dropdown__item {
+    color: #b1afcd !important;
+    &:hover, &.is-hovering {
+      background: rgba(64, 221, 255, 0.06) !important;
+      color: #40ddff !important;
+    }
+    &.selected, &.is-selected {
+      color: #40ddff !important;
+      font-weight: 600;
+    }
+  }
+  .popper__arrow::before { border-color: #1c1945 !important; }
+}
+
+/* --- 标签 --- */
+.el-tag {
+  border: none !important;
+  font-weight: 500;
+  border-radius: 6px !important;
+  font-size: 11px !important;
+  padding: 0 10px !important;
+  &--primary, &--default { background: rgba(64, 221, 255, 0.12) !important; color: #40ddff !important; }
+  &--success { background: rgba(46, 204, 113, 0.12) !important; color: #2ecc71 !important; }
+  &--warning { background: rgba(243, 156, 18, 0.12) !important; color: #f39c12 !important; }
+  &--danger  { background: rgba(255, 64, 154, 0.12) !important; color: #ff409a !important; }
+  &--info    { background: rgba(111, 108, 153, 0.15) !important; color: #6f6c99 !important; }
+}
+
+/* --- 表单 --- */
+.el-form-item__label { color: #b1afcd !important; font-size: 13px !important; }
+
+/* --- 加载 --- */
+.el-loading-mask { background-color: rgba(23, 21, 58, 0.7) !important; }
+.el-loading-spinner .path { stroke: #40ddff !important; }
+.el-loading-text { color: #b1afcd !important; }
+
+/* --- 消息提示 --- */
+.el-message {
+  background: #1c1945 !important;
+  border: 1px solid rgba(49, 47, 98, 0.6) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+  .el-message__content { color: #b1afcd !important; }
+}
+.el-message--success .el-message__content { color: #2ecc71 !important; }
+.el-message--error .el-message__content { color: #ff409a !important; }
+
+/* --- 头像 --- */
+.el-avatar {
+  --el-avatar-bg-color: rgba(49, 47, 98, 0.6) !important;
+  color: #b1afcd !important;
+}
+
+/* --- 空状态 --- */
+.el-empty__description p { color: #5b5a99 !important; }
+
+/* ============================================================
+   页面通用组件
+   ============================================================ */
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+
+  h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-white);
+  }
+}
+
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.table-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 24px;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+.pagination-wrap {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+/* ============================================================
+   全局滚动条
+   ============================================================ */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(49, 47, 98, 0.6); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(49, 47, 98, 0.9); }
