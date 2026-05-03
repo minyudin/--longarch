@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Longarch 智慧农业｜功能与技术栈推荐页</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&family=Chivo:wght@300;400;700&family=Chivo+Mono:wght@300;400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Jost:wght@200;300;400;500&family=Fraunces:ital,opsz,wght@0,9..144,100;0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=Epilogue:wght@300;400;500;700&family=Sentient:ital,wght@0,400;0,700;1,400&family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@300;400;500&family=Lora:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500&family=Syne:wght@400;600;700;800&family=Noto+Serif+Display:ital,wght@0,300;0,400;1,300;1,400&family=Karla:wght@300;400;500&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&family=Hanken+Grotesk:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cabin:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./1.css" />
+  </head>
+  <body>
+    <div class="scroll-progress" id="scrollProgress"></div>
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <div class="hero">
+      <div class="hero-eyebrow">Longarch Smart Agriculture</div>
+      <h1>智慧农业系统的 <em>核心功能</em> 与<br />技术栈总览</h1>
+      <p>
+        聚焦业务功能与技术架构全景，面向展示与汇报场景，
+        清晰呈现系统能力边界、模块分工与工程栈组成。
+      </p>
+    </div>
+
+    <div class="grid">
+      <!-- 1 -->
+      <div class="card">
+        <div class="card-num">01</div>
+        <div class="card-body">
+          <div class="card-tag"><span>系统定位</span><span>业务目标</span></div>
+          <div class="preview">
+            <div class="p1-h">
+              智慧农业认养 + <em>远程作业</em><br />全栈闭环系统
+            </div>
+            <div class="p1-b">
+              系统围绕“认养关系、地块、设备、任务调度、运营审核、设备回调”构建，
+              形成覆盖用户、运营与设备层的智慧农业协同闭环。
+            </div>
+          </div>
+          <div class="meta">
+            <div class="meta-item">
+              终端协同 · <strong>管理端 + 小程序端 + 大棚前端</strong>
+            </div>
+            <div class="meta-item">目标链路 · <strong>创建 -> 审核/调度 -> 执行 -> 回写</strong></div>
+          </div>
+          <div class="card-desc">
+            平台定位于“认养服务 + 智能作业 + 数据回写”一体化，
+            强调角色边界、任务流转与设备链路协同。
+          </div>
+        </div>
+      </div>
+
+      <!-- 2 -->
+      <div class="card">
+        <div class="card-num">02</div>
+        <div class="card-body">
+          <div class="card-tag">
+            <span>角色与权限</span><span>账号体系</span>
+          </div>
+          <div class="preview p2">
+            <div class="p2-h">权限边界<br /><em>明确可控</em></div>
+            <div class="p2-b">
+              支持 admin、adopter、operator、guest 四类角色，
+              前后端路由与接口权限按角色隔离，避免职责混淆。
+            </div>
+          </div>
+          <div class="meta">
+            <div class="meta-item">
+              登录维度 · <strong>管理端账号登录 + 小程序 stub 身份联调</strong>
+            </div>
+            <div class="meta-item">
+              边界收敛 · <strong>admin 端已移除 OperatorQueue 入口/路由/API</strong>
+            </div>
+          </div>
+          <div class="card-desc">
+              权限体系强调“谁可见、谁可执行、谁可审核”，
+              支撑多端协同下的清晰职责分层。
+          </div>
+        </div>
+      </div>
+
+      <!-- 3 -->
+      <div class="card">
+        <div class="card-num">03</div>
+        <div class="card-body">
+          <div class="card-tag"><span>认养体系</span><span>地块管理</span></div>
+          <div class="preview">
+            <div class="p3-h">认养码/订单/地块<br /><em>可持续运营</em></div>
+            <div class="p3-b">
+              系统支持认养码签发、认养订单管理、地块详情与状态查看，
+              为后续任务创建与设备联动提供业务基础。
+            </div>
+          </div>
+          <div class="meta">
+            <div class="meta-item">
+              业务实体 · <strong>adoption_code / adoption_order / plot</strong>
+            </div>
+            <div class="meta-item">用户路径 · <strong>我的认养 -> 地块详情 -> 申请操作</strong></div>
+          </div>
+          <div class="card-desc">
+              该模块作为业务入口，承接从用户认养到作业申请的完整路径。
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 -->
+      <div class="card">
+        <div class="card-num">04</div>
+        <div class="card-body">
+          <div class="card-tag">
+            <span>任务体系</span><span>状态机制</span>
+          </div>
+          <div class="preview p4">
+            <div class="p4-h">任务是系统核心<br /><em>一切围绕状态流转</em></div>
+            <div class="p4-b">pending -> queued/running -> success/failed/cancelled</div>
+          </div>
+          <div class="meta">
+            <div class="meta-item">
+              审核状态 · <strong>none / operator_required / approved / rejected</strong>
+            </div>
+            <div class="meta-item">
+              核心表 · <strong>operation_task</strong>
+            </div>
+          </div>
+          <div class="card-desc">
+              任务状态与审核状态双轨并行，支持自动调度与人工审核双路径。
+          </div>
+        </div>
+      </div>
+
+      <!-- 5 -->
+      <div class="card">
+        <div class="card-num">05</div>
+        <div class="card-body">
+          <div class="card-tag">
+            <span>直派运营</span><span>新增能力</span>
+          </div>
+          <div class="preview">
+            <div class="p5-h">交由运营处理<br /><em>可选增强路径</em></div>
+            <div class="p5-b">
+              认养者创建任务时可选“交由运营处理”，
+              任务直接进入 operator_required，保留原自动风险策略并行存在。
+            </div>
+          </div>
+          <div class="meta">
+            <div class="meta-item">
+              风险原因 · <strong>manual_direct_operator / manual_reason</strong>
+            </div>
+            <div class="meta-item">指派字段 · <strong>assignee_user_id / assignment_mode</strong></div>
+          </div>
+          <div class="card-desc">
+              该能力让任务处理更灵活，可按场景选择自动策略或人工运营介入。
+          </div>
+        </div>
+      </div>
+
+      <!-- 6 -->
+      <div class="card">
+        <div class="card-num">06</div>
+        <div class="card-body">
+          <div class="card-tag">
+            <span>Operator 工作台</span><span>责任域筛选</span>
+          </div>
+          <div class="preview p6">
+            <div class="p6-h">待审核任务处理<br />并支持“仅我的”</div>
+            <div class="p6-b">
+              operator 工作台支持待审列表、通过/拒绝、责任域全部/仅我的筛选，
+              并可在联调中验证绑定关系对视图结果的直接影响。
+            </div>
+          </div>
+          <div class="meta">
+            <div class="meta-item">
+              关键能力 · <strong>审核动作 + 视图切换 + 状态刷新</strong>
+            </div>
+            <div class="meta-item">依赖关系 · <strong>operator_plot_binding</strong></div>
+          </div>
+          <div class="card-desc">
+              工作台聚焦待审效率与责任边界，提升运营处理的可控性与可追踪性。
+          </div>
+        </div>
+      </div>
+
+      <!-- 7 -->
+      <div class="card">
+        <div class="card-num">07</div>
+        <div class="card-body">
+          <div class="card-tag">
+            <span>责任域配置</span><span>管理端能力</span>
+          </div>
+          <div class="preview">
+            <div class="p7-h">绑定地块 · 设主责<br /><em>解绑维护</em></div>
+            <div class="p7-b">
+              Operator Scope 页面支持选择操作员、绑定地块责任域、设置主责和解绑，
+              每次操作均可落库并反馈到 operator 工作台。
+            </div>
+          </div>
+          <div class="meta">
+            <div class="meta-item">
+              页面动作 · <strong>绑定 / 设主责 / 解绑</strong>
+            </div>
+            <div class="meta-item">
+              数据落点 · <strong>operator_plot_binding.is_primary/status/deleted</strong>
+            </div>
+          </div>
+          <div class="card-desc">
+              责任域配置是运营组织管理核心，确保任务分配符合地块归属规则。
+          </div>
+        </div>
+      </div>
+
+      <!-- 8 -->
+      <div class="card">
+        <div class="card-num">08</div>
+        <div class="card-body">
+          <div class="card-tag"><span>后端技术栈</span><span>服务能力</span></div>
+          <div class="preview p8">
+            <div class="p8-eyebrow">Java 17 · Spring Boot · MQTT</div>
+            <div class="p8-h">
+              业务逻辑稳定承载<br /><em>任务与设备闭环</em>
+            </div>
+            <div class="p8-b">
+              MyBatis-Plus + MySQL 负责核心数据模型，
+              Spring Integration + Paho 负责 MQTT 入站/出站消息链路。
+            </div>
+          </div>
+          <div class="meta">
+            <div class="meta-item">
+              核心栈 · <strong>Java / Spring Boot / MyBatis-Plus / MySQL</strong>
+            </div>
+            <div class="meta-item">
+              消息链路 · <strong>MQTT callback / heartbeat / telemetry</strong>
+            </div>
+          </div>
+          <div class="card-desc">
+              后端负责承载业务规则、数据一致性与设备通信，是平台稳定运行底座。
+          </div>
+        </div>
+      </div>
+
+      <!-- 9 -->
+      <div class="card">
+        <div class="card-num">09</div>
+        <div class="card-body">
+          <div class="card-tag">
+            <span>前端技术栈</span><span>体验能力</span>
+          </div>
+          <div class="preview p9">
+            <div class="p9-h">管理端 + 小程序端<br /><em>风格统一演进</em></div>
+            <div class="p9-b">
+              管理端基于 React + TS + Vite + Query + GSAP，
+              小程序端基于 Taro + React + TS + SCSS，并支持 H5 联调。
+            </div>
+          </div>
+          <div class="meta">
+            <div class="meta-item">
+              管理端 · <strong>React / TypeScript / Vite / TanStack Query</strong>
+            </div>
+            <div class="meta-item">小程序端 · <strong>Taro / React / TypeScript / SCSS</strong></div>
+          </div>
+          <div class="card-desc">
+              前端体系强调跨端一致的交互体验、状态反馈与信息可读性。
+          </div>
+        </div>
+      </div>
+
+      <!-- 10 -->
+      <div class="card">
+        <div class="card-num">10</div>
+        <div class="card-body">
+          <div class="card-tag">
+            <span>测试与工程体系</span><span>部署架构</span>
+          </div>
+          <div class="preview">
+            <div class="p10-eyebrow">Engineering · Testing · Runtime</div>
+            <div class="p10-h">工程化联调与部署<br />支撑全链路协同</div>
+            <div class="p10-b">
+              采用 PowerShell + pnpm + Maven + Mosquitto 进行本地服务编排，
+              并结合 Python 模拟器与自动化工具支持持续联调与回归测试。
+            </div>
+          </div>
+          <div class="meta">
+            <div class="meta-item">
+              测试方式 · <strong>MCP Playwright + Python MQTT 模拟 + 手工冒烟</strong>
+            </div>
+            <div class="meta-item">
+              部署要素 · <strong>MQTT Broker / Backend / Admin / Miniapp H5</strong>
+            </div>
+          </div>
+          <div class="card-desc">
+            工程体系覆盖开发、联调、测试与部署关键环节，
+            保障业务功能可持续演进与稳定交付。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      推荐页
+    </div>
+    <script src="./1.js"></script>
+  </body>
+</html>
