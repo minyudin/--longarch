@@ -1,0 +1,461 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: full-stack-flow.spec.ts >> Full stack flow (setup/verify) >> stage dispatcher
+- Location: e2e\full-stack-flow.spec.ts:40:3
+
+# Error details
+
+```
+Test timeout of 120000ms exceeded.
+```
+
+# Page snapshot
+
+```yaml
+- generic:
+  - generic:
+    - generic:
+      - complementary:
+        - generic:
+          - generic:
+            - text: Longarch
+            - generic: 陇上
+        - navigation:
+          - link:
+            - /url: /dashboard
+            - generic: §1
+            - generic:
+              - generic: 仪表盘
+              - generic: Dashboard
+          - link:
+            - /url: /adoptions/new
+            - generic: §+
+            - generic:
+              - generic: 新建认养
+              - generic: New Adoption
+          - link:
+            - /url: /users
+            - generic: §2
+            - generic:
+              - generic: 用户
+              - generic: Users
+          - link:
+            - /url: /orders
+            - generic: §3
+            - generic:
+              - generic: 认养订单
+              - generic: Orders
+          - link:
+            - /url: /codes
+            - generic: §4
+            - generic:
+              - generic: 认养码
+              - generic: Codes
+          - link:
+            - /url: /plots
+            - generic: §5
+            - generic:
+              - generic: 地块
+              - generic: Plots
+          - link:
+            - /url: /device-overview
+            - generic: §6
+            - generic:
+              - generic: 设备总览
+              - generic: Devices
+          - link:
+            - /url: /cameras
+            - generic: §7
+            - generic:
+              - generic: 摄像头
+              - generic: Cameras
+          - link:
+            - /url: /devices
+            - generic: §8
+            - generic:
+              - generic: 执行设备
+              - generic: Actuators
+          - link:
+            - /url: /screens
+            - generic: §9
+            - generic:
+              - generic: 大屏
+              - generic: Screens
+          - link:
+            - /url: /tasks
+            - generic: §10
+            - generic:
+              - generic: 操作任务
+              - generic: Tasks
+      - banner:
+        - generic:
+          - generic: §5
+          - generic: ·
+          - generic: 地块
+          - generic: Plots
+        - generic:
+          - generic: 陇上认养
+          - generic:
+            - generic: 平台管理员
+            - generic: 平台管理员
+          - button:
+            - text: 登出
+            - emphasis: Sign out
+      - main:
+        - main:
+          - generic:
+            - generic:
+              - generic: §5 · Land
+              - heading [level=1]:
+                - text: Plots
+                - generic: 地 块
+              - paragraph:
+                - emphasis: The soil under our devices. Where crops quietly grow.
+            - generic:
+              - generic: 41 ENTRIES
+              - generic: ·
+              - generic: PAGE 01
+          - generic:
+            - generic:
+              - generic:
+                - generic: GREENHOUSE
+                - combobox:
+                  - generic: 全部 · All
+                  - img
+              - generic:
+                - generic: STATUS
+                - combobox:
+                  - generic: 全部 · All
+                  - img
+              - button [expanded]: + 新建地块
+            - generic:
+              - generic:
+                - generic:
+                  - table:
+                    - rowgroup:
+                      - row:
+                        - columnheader: Plot
+                        - columnheader: Parent
+                        - columnheader: Farm
+                        - columnheader: Area
+                        - columnheader: Status
+                        - columnheader: Op.
+                    - rowgroup:
+                      - row:
+                        - cell:
+                          - generic:
+                            - generic: 大棚
+                            - generic:
+                              - generic: A区1号田
+                              - generic: PLOT-A001
+                        - cell: —
+                        - cell: 稻梦田园
+                        - cell: "2.5"
+                        - cell:
+                          - generic: 使用中
+                        - cell:
+                          - generic:
+                            - button: + 新批次
+                            - button: + 订单
+                            - generic:
+                              - generic: 绑定
+                              - button: 摄像头
+                              - generic: ·
+                              - button: 设备
+                              - generic: ·
+                              - button: 传感器
+                              - generic: ·
+                              - button: 大屏
+                      - row:
+                        - cell:
+                          - generic:
+                            - generic: 大棚
+                            - generic:
+                              - generic: A区2号田
+                              - generic: PLOT-A002
+                        - cell: —
+                        - cell: 稻梦田园
+                        - cell: "3"
+                        - cell:
+                          - generic: 使用中
+                        - cell:
+                          - generic:
+                            - button: + 新批次
+                            - button: + 订单
+                            - generic:
+                              - generic: 绑定
+                              - button: 摄像头
+                              - generic: ·
+                              - button: 设备
+                              - generic: ·
+                              - button: 传感器
+                              - generic: ·
+                              - button: 大屏
+                      - row:
+                        - cell:
+                          - generic:
+                            - generic: 大棚
+                            - generic:
+                              - generic: 1号大棚
+                              - generic: PLOT-DM01
+                        - cell: —
+                        - cell: 稻梦田园
+                        - cell: "2"
+                        - cell:
+                          - generic: 使用中
+                        - cell:
+                          - generic:
+                            - button: + 新批次
+                            - button: + 订单
+                            - generic:
+                              - generic: 绑定
+                              - button: 摄像头
+                              - generic: ·
+                              - button: 设备
+                              - generic: ·
+                              - button: 传感器
+                              - generic: ·
+                              - button: 大屏
+                      - row:
+                        - cell:
+                          - generic:
+                            - generic: 大棚
+                            - generic:
+                              - generic: 2号大棚
+                              - generic: PLOT-DM02
+                        - cell: —
+                        - cell: 稻梦田园
+                        - cell: "1.8"
+                        - cell:
+                          - generic: 使用中
+                        - cell:
+                          - generic:
+                            - button: + 新批次
+                            - button: + 订单
+                            - generic:
+                              - generic: 绑定
+                              - button: 摄像头
+                              - generic: ·
+                              - button: 设备
+                              - generic: ·
+                              - button: 传感器
+                              - generic: ·
+                              - button: 大屏
+                      - row:
+                        - cell:
+                          - generic:
+                            - generic: 大棚
+                            - generic:
+                              - generic: 3号大棚
+                              - generic: PLOT-DM03
+                        - cell: —
+                        - cell: 稻梦田园
+                        - cell: "2.2"
+                        - cell:
+                          - generic: 使用中
+                        - cell:
+                          - generic:
+                            - button: + 新批次
+                            - button: + 订单
+                            - generic:
+                              - generic: 绑定
+                              - button: 摄像头
+                              - generic: ·
+                              - button: 设备
+                              - generic: ·
+                              - button: 传感器
+                              - generic: ·
+                              - button: 大屏
+                      - row:
+                        - cell:
+                          - generic:
+                            - generic: 大棚
+                            - generic:
+                              - generic: E2E演示地块-171955
+                              - generic: PLOT-403A23
+                        - cell: —
+                        - cell: 陇上基地
+                        - cell: "1.5"
+                        - cell:
+                          - generic: 使用中
+                        - cell:
+                          - generic:
+                            - button: + 新批次
+                            - button: + 订单
+                            - generic:
+                              - generic: 绑定
+                              - button: 摄像头
+                              - generic: ·
+                              - button: 设备
+                              - generic: ·
+                              - button: 传感器
+                              - generic: ·
+                              - button: 大屏
+                      - row:
+                        - cell:
+                          - generic:
+                            - generic: 大棚
+                            - generic:
+                              - generic: E2E演示地块-172717
+                              - generic: PLOT-8F7F3E
+                        - cell: —
+                        - cell: 陇上基地
+                        - cell: "1.5"
+                        - cell:
+                          - generic: 使用中
+                        - cell:
+                          - generic:
+                            - button: + 新批次
+                            - button: + 订单
+                            - generic:
+                              - generic: 绑定
+                              - button: 摄像头
+                              - generic: ·
+                              - button: 设备
+                              - generic: ·
+                              - button: 传感器
+                              - generic: ·
+                              - button: 大屏
+                      - row:
+                        - cell:
+                          - generic:
+                            - generic: 大棚
+                            - generic:
+                              - generic: UI-E2E-611196
+                              - generic: PLOT-64679F
+                        - cell: —
+                        - cell: 陇上基地
+                        - cell: "1"
+                        - cell:
+                          - generic: 使用中
+                        - cell:
+                          - generic:
+                            - button: + 新批次
+                            - button: + 订单
+                            - generic:
+                              - generic: 绑定
+                              - button: 摄像头
+                              - generic: ·
+                              - button: 设备
+                              - generic: ·
+                              - button: 传感器
+                              - generic: ·
+                              - button: 大屏
+                      - row:
+                        - cell:
+                          - generic:
+                            - generic: 大棚
+                            - generic:
+                              - generic: UI-E2E-817625
+                              - generic: PLOT-CABD6D
+                        - cell: —
+                        - cell: 陇上基地
+                        - cell: "1"
+                        - cell:
+                          - generic: 使用中
+                        - cell:
+                          - generic:
+                            - button: + 新批次
+                            - button: + 订单
+                            - generic:
+                              - generic: 绑定
+                              - button: 摄像头
+                              - generic: ·
+                              - button: 设备
+                              - generic: ·
+                              - button: 传感器
+                              - generic: ·
+                              - button: 大屏
+                      - row:
+                        - cell:
+                          - generic:
+                            - generic: 大棚
+                            - generic:
+                              - generic: UI-E2E-115181
+                              - generic: PLOT-91F22B
+                        - cell: —
+                        - cell: 陇上基地
+                        - cell: "1"
+                        - cell:
+                          - generic: 使用中
+                        - cell:
+                          - generic:
+                            - button: + 新批次
+                            - button: + 订单
+                            - generic:
+                              - generic: 绑定
+                              - button: 摄像头
+                              - generic: ·
+                              - button: 设备
+                              - generic: ·
+                              - button: 传感器
+                              - generic: ·
+                              - button: 大屏
+                - generic:
+                  - generic:
+                    - generic: 41 entries · page 01/05
+                    - generic:
+                      - generic:
+                        - button [disabled]:
+                          - img
+                        - button [disabled]:
+                          - img
+                      - generic:
+                        - textbox: "1"
+                        - generic: / 05
+                      - generic:
+                        - button:
+                          - img
+                        - button:
+                          - img
+    - region "Notifications alt+T"
+    - generic:
+      - generic:
+        - img
+      - button:
+        - img
+  - dialog "新建地块" [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e4]: § FORM · new plot
+      - heading "新建地块" [level=2] [ref=e5]
+      - paragraph [ref=e6]: Register a greenhouse or a sub-plot.
+    - generic [ref=e8]:
+      - generic [ref=e9]:
+        - generic [ref=e10]: NAME *
+        - textbox "NAME *" [active] [ref=e11]
+      - generic [ref=e12]:
+        - generic [ref=e13]: PLOT NO.
+        - textbox "PLOT NO." [ref=e14]
+      - generic [ref=e15]:
+        - generic [ref=e16]: PARENT
+        - combobox "PARENT" [ref=e17]:
+          - generic: none · 大棚级
+          - img [ref=e18]
+      - generic [ref=e20]:
+        - generic [ref=e21]: FARM
+        - textbox "FARM" [ref=e22]:
+          - /placeholder: ""
+      - generic [ref=e23]:
+        - generic [ref=e24]: AREA
+        - spinbutton "AREA" [ref=e25]
+      - generic [ref=e26]:
+        - generic [ref=e27]: LONGITUDE
+        - spinbutton "LONGITUDE" [ref=e28]
+      - generic [ref=e29]:
+        - generic [ref=e30]: LATITUDE
+        - spinbutton "LATITUDE" [ref=e31]
+      - generic [ref=e32]:
+        - generic [ref=e33]: INTRO
+        - textbox "INTRO" [ref=e34]
+    - generic [ref=e35]:
+      - button "取消" [ref=e36]
+      - button "提交" [ref=e37]
+    - button "Close" [ref=e38]:
+      - img [ref=e39]
+```
