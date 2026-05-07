@@ -1,0 +1,111 @@
+@use '@/styles/tokens' as *;
+@use '@/styles/mixins' as *;
+
+.topbar {
+  grid-area: topbar;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 bl(3);
+  @include hairline-soft-bottom;
+  background: $paper-light;
+  gap: bl(2);
+
+  &__left {
+    display: flex;
+    align-items: baseline;
+    gap: bl(1);
+    min-width: 0;
+  }
+
+  &__seal {
+    @include folio-mono;
+    font-size: 11px;
+    color: $ink-faint;
+    letter-spacing: 0.12em;
+  }
+
+  &__sep {
+    color: $ink-faint;
+    font-size: 11px;
+  }
+
+  &__title-cn {
+    font-family: $font-sans;
+    font-size: 14px;
+    color: $ink;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+  }
+
+  &__title-en {
+    font-family: $font-serif;
+    font-style: italic;
+    font-size: 13px;
+    color: $ink-soft;
+    margin-left: bl(0.5);
+  }
+
+  &__right {
+    display: flex;
+    align-items: center;
+    gap: bl(2);
+  }
+
+  &__platform {
+    @include folio-mono;
+    font-size: 10px;
+    color: $ink-faint;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  &__user {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    padding: 0 bl(1) 0 bl(2);
+    @include hairline-soft-left;
+
+    &-role {
+      @include folio-mono;
+      font-size: 9px;
+      color: $ink-faint;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    &-name {
+      font-family: $font-sans;
+      font-size: 13px;
+      color: $ink;
+      font-weight: 500;
+    }
+  }
+
+  &__logout {
+    font-family: $font-sans;
+    font-size: 12px;
+    color: $ink-soft;
+    background: transparent;
+    border: none;
+    padding: bl(0.75) bl(1.25);
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: color 0.2s $ease-folio;
+
+    em {
+      font-family: $font-serif;
+      font-style: italic;
+      font-size: 10px;
+      color: $ink-faint;
+      margin-left: bl(0.5);
+    }
+
+    &:hover {
+      color: $clay;
+      em { color: $clay; }
+    }
+  }
+}
