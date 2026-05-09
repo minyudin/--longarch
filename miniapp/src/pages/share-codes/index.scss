@@ -1,0 +1,290 @@
+@use '@/styles/tokens' as *;
+@use '@/styles/mixins' as *;
+
+.share-page {
+  min-height: 100vh;
+  background: $paper;
+  color: $ink;
+  padding: bl(2.2) bl(1.6) calc(bl(4.5) + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: bl(1.1);
+}
+
+.share-success {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(31, 29, 27, 0.18);
+  pointer-events: none;
+
+  &__card {
+    width: min(84vw, 560px);
+    @include hairline-all;
+    border-color: $ink;
+    background: #f8f3ea;
+    padding: bl(1.1) bl(1.2);
+    display: flex;
+    flex-direction: column;
+    gap: bl(0.35);
+    box-shadow: 0 8px 24px rgba(30, 28, 25, 0.16);
+  }
+
+  &__seal {
+    @include folio-mono;
+    font-size: 11px;
+    letter-spacing: 0.24em;
+    color: $ink-faint;
+  }
+
+  &__title {
+    font-family: $font-serif;
+    font-size: 30px;
+    color: $ink;
+    letter-spacing: 0.08em;
+  }
+
+  &__code {
+    @include folio-mono;
+    font-size: 15px;
+    color: $ink-soft;
+    letter-spacing: 0.14em;
+  }
+}
+
+.share-head {
+  @include hairline-all;
+  background: $paper-light;
+  padding: bl(1.1) bl(1.2);
+
+  &__seal {
+    @include folio-mono;
+    font-size: 14px;
+    color: $ink-faint;
+    letter-spacing: 0.28em;
+  }
+  &__title {
+    display: block;
+    margin-top: bl(0.5);
+    font-family: $font-serif;
+    font-size: 42px;
+    letter-spacing: 0.12em;
+  }
+  &__lede {
+    display: block;
+    margin-top: bl(0.45);
+    color: $ink-soft;
+    font-size: 23px;
+  }
+  &__meta {
+    margin-top: bl(0.7);
+    padding-top: bl(0.5);
+    @include hairline-soft-top;
+    display: inline-flex;
+    align-items: baseline;
+    gap: bl(0.3);
+  }
+  &__meta-key {
+    @include folio-mono;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    color: $ink-faint;
+  }
+  &__meta-val {
+    font-family: $font-serif;
+    font-size: 21px;
+    color: $ink;
+    min-width: bl(1.2);
+    text-align: center;
+  }
+  &__meta-dot {
+    color: $ink-faint;
+    margin: 0 bl(0.1);
+  }
+}
+
+.share-create {
+  @include hairline-all;
+  background: #f4eee3;
+  padding: bl(0.95);
+  display: flex;
+  flex-direction: column;
+  gap: bl(0.6);
+
+  &__head {
+    width: 100%;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-bottom: bl(0.45);
+    @include hairline-soft-bottom;
+  }
+  &__seal {
+    @include folio-mono;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: $ink-faint;
+  }
+  &__title {
+    font-family: $font-serif;
+    font-size: 24px;
+    color: $ink;
+  }
+  &__row {
+    width: 100%;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: bl(0.55);
+    align-items: center;
+  }
+
+  &__label {
+    @include folio-mono;
+    font-size: 13px;
+    color: $ink-faint;
+    letter-spacing: 0.08em;
+  }
+  &__input {
+    @include hairline-all;
+    background: #fdfbf7;
+    padding: bl(0.52) bl(0.65);
+    font-size: 23px;
+    min-height: bl(2);
+  }
+  &__btn {
+    @include button-reset;
+    @include hairline-all;
+    background: $ink;
+    color: $paper;
+    padding: bl(0.66) bl(1.05);
+    font-size: 21px;
+    border-radius: 12px;
+    &::after { content: none; border: none; }
+  }
+  &__hint {
+    width: 100%;
+    @include folio-em;
+    font-size: 19px;
+    color: $ink-soft;
+  }
+}
+
+.share-err {
+  @include folio-mono;
+  color: $clay;
+  font-size: 13px;
+}
+
+.share-list {
+  @include hairline-all;
+  background: $paper-light;
+  padding: bl(0.9) bl(0.95);
+  display: flex;
+  flex-direction: column;
+  gap: bl(0.6);
+
+  &__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: bl(0.5);
+    padding-bottom: bl(0.45);
+    @include hairline-soft-bottom;
+  }
+  &__title {
+    @include folio-mono;
+    font-size: 12px;
+    color: $ink-faint;
+    letter-spacing: 0.24em;
+  }
+  &__sub {
+    @include folio-mono;
+    font-size: 10px;
+    color: $ink-faint;
+    letter-spacing: 0.08em;
+  }
+}
+
+.share-empty {
+  color: $ink-faint;
+  font-size: 22px;
+  text-align: center;
+  padding: bl(1.2) 0;
+}
+
+.share-card {
+  @include hairline-all;
+  background: #fcf9f4;
+  padding: bl(0.72) bl(0.78);
+  display: flex;
+  flex-direction: column;
+  gap: bl(0.34);
+
+  &__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: bl(0.5);
+  }
+
+  &__code {
+    font-family: $font-mono;
+    font-size: 20px;
+    color: $ink;
+    letter-spacing: 0.12em;
+  }
+  &__status {
+    @include folio-mono;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    padding: bl(0.16) bl(0.3);
+    @include hairline-all;
+    border-color: $line-soft;
+    &--active {
+      color: #4f6b56;
+      background: #eef5ef;
+    }
+    &--revoked {
+      color: $clay;
+      background: #f7ece8;
+    }
+  }
+  &__meta-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: bl(0.18) bl(0.55);
+    padding-top: bl(0.3);
+    @include hairline-soft-top;
+  }
+  &__meta-k {
+    @include folio-mono;
+    font-size: 10px;
+    color: $ink-soft;
+    letter-spacing: 0.14em;
+  }
+  &__meta-v {
+    @include folio-mono;
+    font-size: 11px;
+    color: $ink-soft;
+    letter-spacing: 0.04em;
+  }
+  &__actions {
+    display: flex;
+    gap: bl(0.9);
+    margin-top: bl(0.2);
+  }
+  &__action {
+    @include folio-mono;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-decoration: underline;
+    color: $ink;
+    &--danger {
+      color: $clay;
+    }
+  }
+}
+
