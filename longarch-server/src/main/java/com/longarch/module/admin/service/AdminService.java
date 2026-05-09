@@ -12,7 +12,13 @@ public interface AdminService {
 
     CreateAdoptionCodeVO createAdoptionCode(CreateAdoptionCodeReq req);
 
+    AdoptionCodeDetailVO getCodeDetail(Long codeId);
+
     CreatePlotVO createPlot(CreatePlotReq req);
+
+    PlotDetailVO getPlotDetail(Long plotId);
+
+    PlotDetailVO updatePlot(Long plotId, UpdatePlotReq req);
 
     BindCameraVO bindCamera(Long plotId, BindCameraReq req);
 
@@ -67,6 +73,8 @@ public interface AdminService {
     // ===== 设备数据查看 =====
 
     DeviceOverviewVO getDeviceOverview();
+
+    HardwareAccessInfoVO getHardwareAccessInfo();
 
     PageResult<SensorDeviceListVO> listSensorDevices(int pageNo, int pageSize, Long plotId, String category);
 

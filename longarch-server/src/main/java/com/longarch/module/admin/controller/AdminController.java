@@ -39,10 +39,28 @@ public class AdminController {
         return R.ok(adminService.createAdoptionCode(req));
     }
 
+    @Operation(summary = "认养码详情 (含完整权限矩阵 + 时间窗)")
+    @GetMapping("/adoption-codes/{codeId}")
+    public R<AdoptionCodeDetailVO> getCodeDetail(@PathVariable Long codeId) {
+        return R.ok(adminService.getCodeDetail(codeId));
+    }
+
     @Operation(summary = "API-30 创建地块")
     @PostMapping("/plots")
     public R<CreatePlotVO> createPlot(@Valid @RequestBody CreatePlotReq req) {
         return R.ok(adminService.createPlot(req));
+    }
+
+    @Operation(summary = "地块详情 (含经纬度 / 封面 / 简介)")
+    @GetMapping("/plots/{plotId}")
+    public R<PlotDetailVO> getPlotDetail(@PathVariable Long plotId) {
+        return R.ok(adminService.getPlotDetail(plotId));
+    }
+
+    @Operation(summary = "更新地块 (部分字段, null = 不改)")
+    @PutMapping("/plots/{plotId}")
+    public R<PlotDetailVO> updatePlot(@PathVariable Long plotId, @Valid @RequestBody UpdatePlotReq req) {
+        return R.ok(adminService.updatePlot(plotId, req));
     }
 
     @Operation(summary = "API-31 绑定摄像头到地块")
@@ -217,6 +235,12 @@ public class AdminController {
     @GetMapping("/device-overview")
     public R<DeviceOverviewVO> getDeviceOverview() {
         return R.ok(adminService.getDeviceOverview());
+    }
+
+    @Operation(summary = "MQTT hardware access info")
+    @GetMapping("/hardware-access")
+    public R<HardwareAccessInfoVO> getHardwareAccessInfo() {
+        return R.ok(adminService.getHardwareAccessInfo());
     }
 
     @Operation(summary = "API-51 传感器设备列表（含最新数据）")

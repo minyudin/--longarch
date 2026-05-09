@@ -23,6 +23,8 @@ import com.longarch.module.adoption.mapper.AdoptionCodeMapper;
 import com.longarch.module.adoption.mapper.AdoptionOrderMapper;
 import com.longarch.module.camera.entity.CameraDevice;
 import com.longarch.module.camera.mapper.CameraDeviceMapper;
+import com.longarch.module.edge.entity.EdgeNode;
+import com.longarch.module.edge.mapper.EdgeNodeMapper;
 import com.longarch.module.plot.entity.CropBatch;
 import com.longarch.module.plot.entity.Plot;
 import com.longarch.module.plot.mapper.CropBatchMapper;
@@ -66,6 +68,7 @@ public class AdminServiceImpl implements AdminService {
     private final AdoptionCodeMapper codeMapper;
     private final PlotMapper plotMapper;
     private final CameraDeviceMapper cameraMapper;
+    private final EdgeNodeMapper edgeNodeMapper;
     private final ActuatorDeviceMapper actuatorMapper;
     private final DeviceLockMapper deviceLockMapper;
     private final OperationTaskMapper taskMapper;
@@ -270,6 +273,50 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    public AdoptionCodeDetailVO getCodeDetail(Long codeId) {
+        AdoptionCode code = codeMapper.selectById(codeId);
+        if (code == null) {
+            throw new BizException(ErrorCode.RESOURCE_NOT_FOUND, "认养码不存在: codeId=" + codeId);
+        }
+        AdoptionCodeDetailVO vo = new AdoptionCodeDetailVO();
+        vo.setCodeId(code.getId());
+        vo.setCode(code.getCode());
+        vo.setCodeType(code.getCodeType());
+        vo.setOrderId(code.getOrderId());
+        vo.setPlotId(code.getPlotId());
+        vo.setCropBatchId(code.getCropBatchId());
+        vo.setBindUserId(code.getBindUserId());
+        vo.setStatus(code.getStatus());
+        vo.setValidFrom(code.getValidFrom() != null ? code.getValidFrom().format(FMT) : null);
+        vo.setValidTo(code.getValidTo() != null ? code.getValidTo().format(FMT) : null);
+        vo.setDailyAccessStart(code.getDailyAccessStart() != null ? code.getDailyAccessStart().toString() : null);
+        vo.setDailyAccessEnd(code.getDailyAccessEnd() != null ? code.getDailyAccessEnd().toString() : null);
+        vo.setCanViewLive(code.getCanViewLive());
+        vo.setCanViewHistory(code.getCanViewHistory());
+        vo.setHistoryDays(code.getHistoryDays());
+        vo.setCanViewSensor(code.getCanViewSensor());
+        vo.setCanOperate(code.getCanOperate());
+        vo.setShareable(code.getShareable());
+        vo.setMaxDailyOperations(code.getMaxDailyOperations());
+        // operationWhitelist 落库是 JSON 字符串, 这里反序列化成 List<String> 省得前端再 parse
+        List<String> whitelist = new ArrayList<>();
+        if (code.getOperationWhitelist() != null && !code.getOperationWhitelist().isBlank()) {
+            try {
+                whitelist = objectMapper.readValue(
+                        code.getOperationWhitelist(),
+                        new com.fasterxml.jackson.core.type.TypeReference<List<String>>() {});
+            } catch (Exception e) {
+                log.warn("Failed to parse operationWhitelist for codeId={}: {}", codeId, e.getMessage());
+            }
+        }
+        vo.setOperationWhitelist(whitelist);
+        vo.setCreatedByUserId(code.getCreatedByUserId());
+        vo.setCreatedAt(code.getCreatedAt() != null ? code.getCreatedAt().format(FMT) : null);
+        vo.setUpdatedAt(code.getUpdatedAt() != null ? code.getUpdatedAt().format(FMT) : null);
+        return vo;
+    }
+
+    @Override
     @Transactional
     public CreatePlotVO createPlot(CreatePlotReq req) {
         Plot plot = new Plot();
@@ -314,6 +361,75 @@ public class AdminServiceImpl implements AdminService {
         vo.setIntroText(plot.getIntroText());
         vo.setCreatedAt(LocalDateTime.now().format(FMT));
         return vo;
+    }
+
+    @Override
+    public PlotDetailVO getPlotDetail(Long plotId) {
+        Plot plot = plotMapper.selectById(plotId);
+        if (plot == null) {
+            throw new BizException(ErrorCode.RESOURCE_NOT_FOUND, "地块不存在: plotId=" + plotId);
+        }
+        PlotDetailVO vo = new PlotDetailVO();
+        vo.setPlotId(plot.getId());
+        vo.setPlotNo(plot.getPlotNo());
+        vo.setPlotName(plot.getPlotName());
+        vo.setParentId(plot.getParentId());
+        if (plot.getParentId() != null) {
+            Plot parent = plotMapper.selectById(plot.getParentId());
+            vo.setParentName(parent != null ? parent.getPlotName() : null);
+        }
+        vo.setFarmId(plot.getFarmId());
+        vo.setFarmName(plot.getFarmName());
+        vo.setAreaSize(plot.getAreaSize());
+        vo.setAreaUnit(plot.getAreaUnit());
+        vo.setLongitude(plot.getLongitude());
+        vo.setLatitude(plot.getLatitude());
+        vo.setPlotStatus(plot.getPlotStatus());
+        vo.setLiveCoverUrl(plot.getLiveCoverUrl());
+        vo.setIntroText(plot.getIntroText());
+        vo.setCreatedAt(plot.getCreatedAt() != null ? plot.getCreatedAt().format(FMT) : null);
+        vo.setUpdatedAt(plot.getUpdatedAt() != null ? plot.getUpdatedAt().format(FMT) : null);
+        return vo;
+    }
+
+    private static final Set<String> VALID_PLOT_STATUSES = Set.of("active", "fallow", "inactive");
+
+    @Override
+    @Transactional
+    public PlotDetailVO updatePlot(Long plotId, UpdatePlotReq req) {
+        Plot plot = plotMapper.selectById(plotId);
+        if (plot == null) {
+            throw new BizException(ErrorCode.RESOURCE_NOT_FOUND, "地块不存在: plotId=" + plotId);
+        }
+        if (req.getPlotStatus() != null && !VALID_PLOT_STATUSES.contains(req.getPlotStatus())) {
+            throw new BizException(ErrorCode.INVALID_PARAM, "不支持的地块状态: " + req.getPlotStatus());
+        }
+        // 经纬度一致性: 要么都传, 要么都不传
+        if ((req.getLongitude() == null) != (req.getLatitude() == null)) {
+            throw new BizException(ErrorCode.INVALID_PARAM, "经度和纬度必须同时填写");
+        }
+
+        String before = safeJson(plot);
+
+        if (req.getPlotName() != null && !req.getPlotName().isBlank()) {
+            plot.setPlotName(req.getPlotName().trim());
+        }
+        if (req.getAreaSize() != null) plot.setAreaSize(req.getAreaSize());
+        if (req.getAreaUnit() != null) plot.setAreaUnit(req.getAreaUnit());
+        if (req.getLongitude() != null) plot.setLongitude(req.getLongitude());
+        if (req.getLatitude() != null) plot.setLatitude(req.getLatitude());
+        if (req.getPlotStatus() != null) plot.setPlotStatus(req.getPlotStatus());
+        if (req.getLiveCoverUrl() != null) plot.setLiveCoverUrl(req.getLiveCoverUrl());
+        if (req.getIntroText() != null) plot.setIntroText(req.getIntroText());
+
+        plotMapper.updateById(plot);
+
+        // 审计: 复用 device_lifecycle_log 表的 kind="plot" 分类
+        auditDeviceChange("plot", plotId, plot.getPlotNo(), plotId,
+                "update", "admin update", before, safeJson(plot));
+
+        log.info("Admin updated plot: plotId={}, plotNo={}", plotId, plot.getPlotNo());
+        return getPlotDetail(plotId);
     }
 
     @Override
@@ -580,7 +696,7 @@ public class AdminServiceImpl implements AdminService {
             throw new BizException(ErrorCode.INVALID_PARAM, "大屏设备编号已存在: " + deviceNo);
         }
 
-        String screenToken = java.util.UUID.randomUUID().toString();
+        String screenToken = generateScreenToken(deviceNo);
 
         ScreenDevice screen = new ScreenDevice();
         screen.setDeviceNo(deviceNo);
@@ -1115,7 +1231,7 @@ public class AdminServiceImpl implements AdminService {
         if (screen == null) {
             throw new BizException(ErrorCode.RESOURCE_NOT_FOUND, "大屏不存在: screenId=" + screenId);
         }
-        String newToken = java.util.UUID.randomUUID().toString();
+        String newToken = generateScreenToken(screen.getDeviceNo());
         screen.setScreenToken(newToken);
         screenDeviceMapper.updateById(screen);
         log.info("Admin regenerated screen token: screenId={}, deviceNo={}", screenId, screen.getDeviceNo());
@@ -1129,6 +1245,20 @@ public class AdminServiceImpl implements AdminService {
         vo.setBindSuccess(true);
         vo.setBoundAt(LocalDateTime.now().format(FMT));
         return vo;
+    }
+
+    /**
+     * 生成可读的 screen_token · 格式: tk-{devicenoshort}-{12hex}
+     *  · 为什么加前缀: 运维复制粘贴时能一眼识别这是哪块大屏的 token, 少出错
+     *  · 为什么 12 位随机: 2¹³² 撞撞可忽, 又不会长到运维输错
+     *  · 示例: tk-scrdm01-a1b2c3d4e5f6
+     */
+    private static String generateScreenToken(String deviceNo) {
+        String suffix = deviceNo == null
+                ? "unknown"
+                : deviceNo.toLowerCase().replace("-", "");
+        String shortHex = java.util.UUID.randomUUID().toString().replace("-", "").substring(0, 12);
+        return "tk-" + suffix + "-" + shortHex;
     }
 
     // ===== 状态变更 =====
@@ -1241,6 +1371,118 @@ public class AdminServiceImpl implements AdminService {
         return vo;
     }
 
+    @Override
+    public HardwareAccessInfoVO getHardwareAccessInfo() {
+        HardwareAccessInfoVO vo = new HardwareAccessInfoVO();
+        vo.setBrokerUrl(mqttProperties.getBrokerUrl());
+        vo.setAuthMode(mqttProperties.getAuthMode());
+        vo.setTlsEnabled(mqttProperties.getSsl() != null && mqttProperties.getSsl().isEnabled());
+        vo.setStrictDeviceIdentity(mqttProperties.isStrictDeviceIdentity());
+        vo.setRequireMessageId(mqttProperties.isRequireMessageId());
+        vo.setRequireTimestamp(mqttProperties.isRequireTimestamp());
+        vo.setReplayWindowSeconds(mqttProperties.getReplayWindowSeconds());
+        vo.setCommandTtlSeconds(mqttProperties.getCommandTtlSeconds());
+        vo.setTopicPrefixes(Map.of(
+                "command", mqttProperties.getCommandTopicPrefix(),
+                "callback", mqttProperties.getCallbackTopicPrefix(),
+                "telemetry", mqttProperties.getTelemetryTopicPrefix(),
+                "heartbeat", mqttProperties.getHeartbeatTopicPrefix()));
+        vo.setQos(Map.of(
+                "command", mqttProperties.getCommandQos(),
+                "callback", mqttProperties.getCallbackQos(),
+                "telemetry", mqttProperties.getTelemetryQos(),
+                "heartbeat", mqttProperties.getHeartbeatQos()));
+
+        List<HardwareAccessInfoVO.DeviceAccessInfo> devices = new ArrayList<>();
+        for (EdgeNode node : edgeNodeMapper.selectList(new LambdaQueryWrapper<>())) {
+            devices.add(edgeAccessInfo(node));
+        }
+        for (SensorDevice sensor : sensorDeviceMapper.selectList(new LambdaQueryWrapper<>())) {
+            devices.add(sensorAccessInfo(sensor));
+        }
+        for (ActuatorDevice actuator : actuatorMapper.selectList(new LambdaQueryWrapper<>())) {
+            devices.add(actuatorAccessInfo(actuator));
+        }
+        for (CameraDevice camera : cameraMapper.selectList(new LambdaQueryWrapper<>())) {
+            devices.add(cameraAccessInfo(camera));
+        }
+        vo.setDevices(devices);
+        return vo;
+    }
+
+    private HardwareAccessInfoVO.DeviceAccessInfo edgeAccessInfo(EdgeNode node) {
+        HardwareAccessInfoVO.DeviceAccessInfo info = new HardwareAccessInfoVO.DeviceAccessInfo();
+        info.setDeviceType("edge");
+        info.setDeviceNo(node.getNodeNo());
+        info.setClientId("longarch-edge-" + node.getNodeNo());
+        info.setPublishTopic(mqttProperties.getHeartbeatTopicPrefix() + node.getNodeNo()
+                + " | " + mqttProperties.getTelemetryTopicPrefix() + "batch/" + node.getNodeNo());
+        info.setSubscribeTopic(mqttProperties.getCommandTopicPrefix() + "+");
+        info.setStatus(node.getNetworkStatus());
+        info.setLastHeartbeatAt(formatDateTime(node.getLastHeartbeatAt()));
+        info.setHeartbeatAgeSeconds(ageSeconds(node.getLastHeartbeatAt()));
+        return info;
+    }
+
+    private HardwareAccessInfoVO.DeviceAccessInfo sensorAccessInfo(SensorDevice sensor) {
+        HardwareAccessInfoVO.DeviceAccessInfo info = new HardwareAccessInfoVO.DeviceAccessInfo();
+        info.setDeviceType("sensor");
+        info.setDeviceNo(sensor.getDeviceNo());
+        info.setClientId("longarch-sensor-" + sensor.getDeviceNo());
+        info.setPublishTopic(mqttProperties.getTelemetryTopicPrefix() + sensor.getDeviceNo());
+        info.setSubscribeTopic(null);
+        info.setStatus(sensor.getStatus());
+        info.setLastHeartbeatAt(formatDateTime(sensor.getLastSampleAt()));
+        info.setHeartbeatAgeSeconds(ageSeconds(sensor.getLastSampleAt()));
+        return info;
+    }
+
+    private HardwareAccessInfoVO.DeviceAccessInfo actuatorAccessInfo(ActuatorDevice actuator) {
+        HardwareAccessInfoVO.DeviceAccessInfo info = new HardwareAccessInfoVO.DeviceAccessInfo();
+        info.setDeviceType("actuator");
+        info.setDeviceNo(actuator.getDeviceNo());
+        info.setClientId("longarch-actuator-" + actuator.getDeviceNo());
+        info.setPublishTopic(mqttProperties.getCallbackTopicPrefix() + actuator.getDeviceNo());
+        info.setSubscribeTopic(mqttProperties.getCommandTopicPrefix() + actuator.getDeviceNo());
+        info.setStatus(actuator.getDeviceStatus());
+        info.setLastHeartbeatAt(formatDateTime(actuator.getLastHeartbeatAt()));
+        info.setHeartbeatAgeSeconds(ageSeconds(actuator.getLastHeartbeatAt()));
+        info.setLastError(latestActuatorError(actuator.getId()));
+        return info;
+    }
+
+    private HardwareAccessInfoVO.DeviceAccessInfo cameraAccessInfo(CameraDevice camera) {
+        HardwareAccessInfoVO.DeviceAccessInfo info = new HardwareAccessInfoVO.DeviceAccessInfo();
+        info.setDeviceType("camera");
+        info.setDeviceNo(camera.getDeviceNo());
+        info.setClientId("longarch-camera-" + camera.getDeviceNo());
+        info.setPublishTopic(mqttProperties.getHeartbeatTopicPrefix() + "{edgeNodeNo}");
+        info.setSubscribeTopic(null);
+        info.setStatus(camera.getNetworkStatus());
+        return info;
+    }
+
+    private String latestActuatorError(Long deviceId) {
+        OperationTask task = taskMapper.selectOne(
+                new LambdaQueryWrapper<OperationTask>()
+                        .eq(OperationTask::getDeviceId, deviceId)
+                        .eq(OperationTask::getTaskStatus, "failed")
+                        .orderByDesc(OperationTask::getUpdatedAt)
+                        .last("LIMIT 1"));
+        return task != null ? task.getFailReason() : null;
+    }
+
+    private String formatDateTime(LocalDateTime value) {
+        return value != null ? value.format(FMT) : null;
+    }
+
+    private Long ageSeconds(LocalDateTime value) {
+        if (value == null) {
+            return null;
+        }
+        return Math.max(java.time.Duration.between(value, LocalDateTime.now()).getSeconds(), 0L);
+    }
+
     private <T> DeviceOverviewVO.DeviceGroupStat buildDeviceStat(String type, List<T> devices) {
         DeviceOverviewVO.DeviceGroupStat stat = new DeviceOverviewVO.DeviceGroupStat();
         stat.setDeviceType(type);
@@ -1306,7 +1548,7 @@ public class AdminServiceImpl implements AdminService {
             return vo;
         }).collect(java.util.stream.Collectors.toList());
 
-        return PageResult.of(voList, (int) page.getTotal(), pageNo, pageSize);
+        return PageResult.of(voList, pageNo, pageSize, page.getTotal());
     }
 
     @Override
@@ -1331,7 +1573,7 @@ public class AdminServiceImpl implements AdminService {
             return vo;
         }).collect(java.util.stream.Collectors.toList());
 
-        return PageResult.of(voList, (int) page.getTotal(), pageNo, pageSize);
+        return PageResult.of(voList, pageNo, pageSize, page.getTotal());
     }
 
     @Override
@@ -1429,7 +1671,7 @@ public class AdminServiceImpl implements AdminService {
             return vo2;
         }).collect(java.util.stream.Collectors.toList());
 
-        return PageResult.of(list, (int) page.getTotal(), pageNo, pageSize);
+        return PageResult.of(list, pageNo, pageSize, page.getTotal());
     }
 
     @Override

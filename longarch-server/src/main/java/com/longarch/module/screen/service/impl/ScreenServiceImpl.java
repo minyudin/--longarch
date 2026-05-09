@@ -60,17 +60,26 @@ public class ScreenServiceImpl implements ScreenService {
 
     /**
      * 解析目标大棚 ID：如果传了 greenhouseId 则校验同农场后使用，否则用 token 绑定的大棚
+     *
+     *  · 严格化容错: 绑定 plot 已被删除时不再静默返回幽灵 ID, 而是抛 RESOURCE_NOT_FOUND
+     *    避免下游"未知大棚 / 未知农场"占位污染数据展示, 也防止 farm 校验被绕过
+     *  · 目标 plot 不存在 → 也抛 RESOURCE_NOT_FOUND (客户端传错了大棚 ID)
      */
     private Long resolveGreenhouseId(ScreenDevice screen, Long greenhouseId) {
         Long defaultId = screen.getPlotId();
-        if (greenhouseId == null) {
+        Plot defaultGh = plotMapper.selectById(defaultId);
+        if (defaultGh == null) {
+            throw new BizException(ErrorCode.RESOURCE_NOT_FOUND,
+                    "大屏绑定的大棚已不存在: plotId=" + defaultId);
+        }
+        if (greenhouseId == null || Objects.equals(greenhouseId, defaultId)) {
             return defaultId;
         }
         // 校验目标大棚和 token 绑定大棚属于同一农场
-        Plot defaultGh = plotMapper.selectById(defaultId);
         Plot targetGh = plotMapper.selectById(greenhouseId);
-        if (defaultGh == null || targetGh == null) {
-            return defaultId;
+        if (targetGh == null) {
+            throw new BizException(ErrorCode.RESOURCE_NOT_FOUND,
+                    "目标大棚不存在: greenhouseId=" + greenhouseId);
         }
         if (!Objects.equals(defaultGh.getFarmId(), targetGh.getFarmId())) {
             throw new BizException(ErrorCode.FORBIDDEN, "无权查看其他农场的大棚");
