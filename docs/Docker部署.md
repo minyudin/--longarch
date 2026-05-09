@@ -27,23 +27,7 @@ cp deploy/.env.example .env
 
 ## 三、后端镜像（longarch-server）
 
-**构建上下文**：仓库根目录下的 `longarch-server/`。
-
-示例 `Dockerfile`（可保存为 `longarch-server/Dockerfile`，按需微调）：
-
-```dockerfile
-FROM eclipse-temurin:17-jdk AS build
-WORKDIR /app
-COPY pom.xml .
-COPY src ./src
-RUN apt-get update && apt-get install -y maven && mvn -q -DskipTests package
-
-FROM eclipse-temurin:17-jre
-WORKDIR /app
-COPY --from=build /app/target/*.jar app.jar
-EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
-```
+本仓库已在 **`longarch-server/Dockerfile`** 中提供多阶段构建（Maven 打包 + `eclipse-temurin:17-jre-alpine` 运行）。同级 **`longarch-server/.dockerignore`** 会忽略 `target/` 等，减小构建上下文。
 
 构建与运行示例：
 
@@ -59,26 +43,7 @@ docker run --rm -p 8080:8080 --env-file ../.env longarch-server:latest
 
 ## 四、前端镜像（longarch-admin）
 
-PC 端为 **Vite + Vue**，通常流程：**Node 构建静态资源 → Nginx 托管**。
-
-**构建上下文**：`longarch-admin/`（需先有 `package.json`，构建命令以项目 `scripts` 为准，一般为 `pnpm install && pnpm build`）。
-
-示例 `Dockerfile`（可保存为 `longarch-admin/Dockerfile`）：
-
-```dockerfile
-FROM node:20-alpine AS build
-WORKDIR /app
-COPY package.json pnpm-lock.yaml* package-lock.json* ./
-RUN corepack enable && (pnpm install --frozen-lockfile || npm ci)
-COPY . .
-RUN pnpm build || npm run build
-
-FROM nginx:alpine
-COPY --from=build /app/dist /usr/share/nginx/html
-# 可选：自定义 nginx 配置以转发 API 到后端
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
-```
+PC 端为 **Vite + Vue**。本仓库已在 **`longarch-admin/Dockerfile`** 中提供：**npm ci → vite build → nginx:alpine** 托管 `dist/`。SPA 路由回退见 **`longarch-admin/nginx/default.conf`**。同级 **`longarch-admin/.dockerignore`** 会忽略 `node_modules/`、`dist/` 等。
 
 构建与运行示例：
 
@@ -88,7 +53,7 @@ docker build -t longarch-admin:latest .
 docker run --rm -p 80:80 longarch-admin:latest
 ```
 
-生产环境建议在 Nginx 层将 `/api`（或实际前缀）反向代理到后端 `http://longarch-server:8080`。
+生产环境建议在 Nginx 或外层网关将 API 反向代理到后端（例如 `http://longarch-server:8080`）。
 
 ---
 
@@ -135,4 +100,4 @@ services:
 - [ ] 前端静态页可打开，且接口域名或反向代理指向后端。
 - [ ] MySQL / Redis / MQTT 连通，`application-prod` 或等价变量正确。
 
-如需把上述 `Dockerfile` 真正落到仓库根目录，可从本文复制后单独提交工程文件。
+`Dockerfile` 与 Nginx 配置已分别放在 `longarch-server/`、`longarch-admin/` 目录，可按需修改后重新构建镜像。
