@@ -1447,3 +1447,101 @@ INSERT INTO `sensor_data` VALUES (924, 70049, 40005, 'N', 100.00, '2026-04-19 15
 INSERT INTO `sensor_data` VALUES (925, 70050, 40005, 'pH', 100.00, '2026-04-19 15:20:15', '2026-04-19 15:20:15');
 INSERT INTO `sensor_data` VALUES (926, 70051, 40005, 'soilTemp', 100.00, '2026-04-19 15:20:15', '2026-04-19 15:20:15');
 INSERT INTO `sensor_data` VALUES (927, 70051, 40005, 'soilMoisture', 100.00, '2026-04-19 15:20:15', '2026-04-19 15:20:15');
+-- ----------------------------
+-- Table structure for sensor_device
+-- ----------------------------
+DROP TABLE IF EXISTS `sensor_device`;
+CREATE TABLE `sensor_device`  (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `device_no` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `sensor_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `plot_id` bigint NOT NULL,
+  `sensor_type` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `category` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'soil' COMMENT 'environment/soil',
+  `unit` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `status` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT 'online',
+  `last_value` decimal(10, 2) NULL DEFAULT NULL,
+  `last_sample_at` datetime NULL DEFAULT NULL,
+  `deleted` tinyint NOT NULL DEFAULT 0,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `uk_device_no`(`device_no` ASC) USING BTREE,
+  INDEX `idx_plot_id`(`plot_id` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 70064 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '传感器设备表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of sensor_device
+-- ----------------------------
+INSERT INTO `sensor_device` VALUES (70001, 'SENSOR-A001-TEMP', '土壤温度传感器', 30001, 'soil_temperature', 'soil', '℃', 'online', 6.80, '2026-04-15 23:17:00', 0, '2026-04-14 21:34:33', '2026-04-14 22:32:07');
+INSERT INTO `sensor_device` VALUES (70002, 'SENSOR-A001-HUMI', '土壤湿度传感器', 30001, 'soil_humidity', 'soil', '%', 'online', 45.20, '2026-04-14 22:54:45', 0, '2026-04-14 21:34:33', '2026-04-14 22:54:46');
+INSERT INTO `sensor_device` VALUES (70003, 'SENSOR-A001-PH', '土壤pH传感器', 30001, 'soil_ph', 'soil', 'pH', 'online', 6.80, '2026-04-14 22:32:07', 0, '2026-04-14 21:34:33', '2026-04-14 22:32:07');
+INSERT INTO `sensor_device` VALUES (70004, 'SENSOR-A001-AIR', '空气温湿度传感器', 30001, 'air_temperature', 'environment', '℃', 'online', 22.30, '2026-04-14 22:32:07', 0, '2026-04-14 21:34:33', '2026-04-16 06:28:28');
+INSERT INTO `sensor_device` VALUES (70005, 'SENSOR-A002-TEMP', '土壤温度传感器', 30002, 'soil_temperature', 'soil', '℃', 'online', 17.80, '2026-04-14 20:00:00', 0, '2026-04-14 21:34:33', '2026-04-14 21:34:33');
+INSERT INTO `sensor_device` VALUES (70010, 'SEN-ENV-DM01', '1号棚环境传感器', 40001, 'env4in1', 'environment', '', 'online', 100.00, '2026-04-19 15:20:15', 0, '2026-04-16 04:36:42', '2026-04-16 20:07:00');
+INSERT INTO `sensor_device` VALUES (70011, 'SEN-ENV-DM02', '2号棚环境传感器', 40006, 'env4in1', 'environment', '', 'online', 100.00, '2026-04-19 15:16:49', 0, '2026-04-16 04:36:42', '2026-04-16 20:07:00');
+INSERT INTO `sensor_device` VALUES (70012, 'SEN-ENV-DM03', '3号棚环境传感器', 40009, 'env4in1', 'environment', '', 'online', 100.00, '2026-04-19 15:16:49', 0, '2026-04-16 04:36:42', '2026-04-16 20:07:00');
+INSERT INTO `sensor_device` VALUES (70020, 'SEN-NPK-DM01', '1号棚NPK传感器', 40002, 'NPK', 'soil', 'mg/kg', 'online', 100.00, '2026-04-19 15:20:15', 0, '2026-04-16 04:36:42', '2026-04-16 20:07:00');
+INSERT INTO `sensor_device` VALUES (70021, 'SEN-NPK-DM02', '2号棚NPK传感器', 40007, 'NPK', 'soil', 'mg/kg', 'online', 100.00, '2026-04-19 15:16:49', 0, '2026-04-16 04:36:42', '2026-04-16 20:07:00');
+INSERT INTO `sensor_device` VALUES (70022, 'SEN-NPK-DM03', '3号棚NPK传感器', 40010, 'NPK', 'soil', 'mg/kg', 'online', 100.00, '2026-04-19 15:16:49', 0, '2026-04-16 04:36:42', '2026-04-16 20:07:00');
+INSERT INTO `sensor_device` VALUES (70030, 'SEN-PH-DM01', '1号棚pH传感器', 40002, 'pH', 'soil', 'pH', 'online', 100.00, '2026-04-19 15:20:15', 0, '2026-04-16 04:36:42', '2026-04-16 20:07:00');
+INSERT INTO `sensor_device` VALUES (70031, 'SEN-PH-DM02', '2号棚pH传感器', 40007, 'pH', 'soil', 'pH', 'online', 100.00, '2026-04-19 15:16:49', 0, '2026-04-16 04:36:42', '2026-04-16 20:07:00');
+INSERT INTO `sensor_device` VALUES (70032, 'SEN-PH-DM03', '3号棚pH传感器', 40010, 'pH', 'soil', 'pH', 'online', 100.00, '2026-04-19 15:16:49', 0, '2026-04-16 04:36:42', '2026-04-16 20:07:00');
+INSERT INTO `sensor_device` VALUES (70040, 'SEN-SM-DM01', '1号棚土温土湿传感器', 40002, 'soilTH', 'soil', '', 'online', 100.00, '2026-04-19 15:20:15', 0, '2026-04-16 04:36:42', '2026-04-16 20:07:00');
+INSERT INTO `sensor_device` VALUES (70041, 'SEN-SM-DM02', '2号棚土温土湿传感器', 40007, 'soilTH', 'soil', '', 'online', 100.00, '2026-04-19 15:16:49', 0, '2026-04-16 04:36:42', '2026-04-16 20:07:00');
+INSERT INTO `sensor_device` VALUES (70042, 'SEN-SM-DM03', '3号棚土温土湿传感器', 40010, 'soilTH', 'soil', '', 'online', 100.00, '2026-04-19 15:16:49', 0, '2026-04-16 04:36:42', '2026-04-16 20:07:00');
+INSERT INTO `sensor_device` VALUES (70043, 'SEN-NPK-DM01-P3', '1号棚3#NPK传感器', 40003, 'NPK', 'soil', 'mg/kg', 'online', 100.00, '2026-04-19 15:20:15', 0, '2026-04-16 22:03:46', '2026-04-16 22:03:46');
+INSERT INTO `sensor_device` VALUES (70044, 'SEN-PH-DM01-P3', '1号棚3#pH传感器', 40003, 'pH', 'soil', 'pH', 'online', 100.00, '2026-04-19 15:20:15', 0, '2026-04-16 22:03:46', '2026-04-16 22:03:46');
+INSERT INTO `sensor_device` VALUES (70045, 'SEN-SM-DM01-P3', '1号棚3#土温土湿传感器', 40003, 'soilTH', 'soil', '', 'online', 100.00, '2026-04-19 15:20:15', 0, '2026-04-16 22:03:46', '2026-04-16 22:03:46');
+INSERT INTO `sensor_device` VALUES (70046, 'SEN-NPK-DM01-P4', '1号棚4#NPK传感器', 40004, 'NPK', 'soil', 'mg/kg', 'online', 100.00, '2026-04-19 15:20:15', 0, '2026-04-16 22:03:46', '2026-04-16 22:03:46');
+INSERT INTO `sensor_device` VALUES (70047, 'SEN-PH-DM01-P4', '1号棚4#pH传感器', 40004, 'pH', 'soil', 'pH', 'online', 100.00, '2026-04-19 15:20:15', 0, '2026-04-16 22:03:46', '2026-04-16 22:03:46');
+INSERT INTO `sensor_device` VALUES (70048, 'SEN-SM-DM01-P4', '1号棚4#土温土湿传感器', 40004, 'soilTH', 'soil', '', 'online', 100.00, '2026-04-19 15:20:15', 0, '2026-04-16 22:03:46', '2026-04-16 22:03:46');
+INSERT INTO `sensor_device` VALUES (70049, 'SEN-NPK-DM01-P5', '1号棚5#NPK传感器', 40005, 'NPK', 'soil', 'mg/kg', 'online', 100.00, '2026-04-19 15:20:15', 0, '2026-04-16 22:03:46', '2026-04-16 22:03:46');
+INSERT INTO `sensor_device` VALUES (70050, 'SEN-PH-DM01-P5', '1号棚5#pH传感器', 40005, 'pH', 'soil', 'pH', 'online', 100.00, '2026-04-19 15:20:15', 0, '2026-04-16 22:03:46', '2026-04-16 22:03:46');
+INSERT INTO `sensor_device` VALUES (70051, 'SEN-SM-DM01-P5', '1号棚5#土温土湿传感器', 40005, 'soilTH', 'soil', '', 'online', 100.00, '2026-04-19 15:20:15', 0, '2026-04-16 22:03:46', '2026-04-16 22:03:46');
+INSERT INTO `sensor_device` VALUES (70052, 'SEN-NPK-DM02-P8', '2号棚8#NPK传感器', 40008, 'NPK', 'soil', 'mg/kg', 'online', 100.00, '2026-04-19 15:16:49', 0, '2026-04-16 22:03:46', '2026-04-16 22:03:46');
+INSERT INTO `sensor_device` VALUES (70053, 'SEN-PH-DM02-P8', '2号棚8#pH传感器', 40008, 'pH', 'soil', 'pH', 'online', 100.00, '2026-04-19 15:16:49', 0, '2026-04-16 22:03:46', '2026-04-16 22:03:46');
+INSERT INTO `sensor_device` VALUES (70054, 'SEN-SM-DM02-P8', '2号棚8#土温土湿传感器', 40008, 'soilTH', 'soil', '', 'online', 100.00, '2026-04-19 15:16:49', 0, '2026-04-16 22:03:46', '2026-04-16 22:03:46');
+INSERT INTO `sensor_device` VALUES (70055, 'SEN-NPK-DM03-P11', '3号棚11#NPK传感器', 40011, 'NPK', 'soil', 'mg/kg', 'online', 100.00, '2026-04-19 15:16:49', 0, '2026-04-16 22:03:46', '2026-04-16 22:03:46');
+INSERT INTO `sensor_device` VALUES (70056, 'SEN-PH-DM03-P11', '3号棚11#pH传感器', 40011, 'pH', 'soil', 'pH', 'online', 100.00, '2026-04-19 15:16:49', 0, '2026-04-16 22:03:46', '2026-04-16 22:03:46');
+INSERT INTO `sensor_device` VALUES (70057, 'SEN-SM-DM03-P11', '3号棚11#土温土湿传感器', 40011, 'soilTH', 'soil', '', 'online', 100.00, '2026-04-19 15:16:49', 0, '2026-04-16 22:03:46', '2026-04-16 22:03:46');
+INSERT INTO `sensor_device` VALUES (70058, 'SEN-NPK-DM03-P12', '3号棚12#NPK传感器', 40012, 'NPK', 'soil', 'mg/kg', 'online', 100.00, '2026-04-19 15:16:49', 0, '2026-04-16 22:03:46', '2026-04-16 22:03:46');
+INSERT INTO `sensor_device` VALUES (70059, 'SEN-PH-DM03-P12', '3号棚12#pH传感器', 40012, 'pH', 'soil', 'pH', 'online', 100.00, '2026-04-19 15:16:49', 0, '2026-04-16 22:03:46', '2026-04-16 22:03:46');
+INSERT INTO `sensor_device` VALUES (70060, 'SEN-SM-DM03-P12', '3号棚12#土温土湿传感器', 40012, 'soilTH', 'soil', '', 'online', 100.00, '2026-04-19 15:16:49', 0, '2026-04-16 22:03:46', '2026-04-16 22:03:46');
+INSERT INTO `sensor_device` VALUES (70061, 'SEN-NPK-DM03-P13', '3号棚13#NPK传感器', 40013, 'NPK', 'soil', 'mg/kg', 'online', 100.00, '2026-04-19 15:16:49', 0, '2026-04-16 22:03:46', '2026-04-16 22:03:46');
+INSERT INTO `sensor_device` VALUES (70062, 'SEN-PH-DM03-P13', '3号棚13#pH传感器', 40013, 'pH', 'soil', 'pH', 'online', 100.00, '2026-04-19 15:16:49', 0, '2026-04-16 22:03:46', '2026-04-16 22:03:46');
+INSERT INTO `sensor_device` VALUES (70063, 'SEN-SM-DM03-P13', '3号棚13#土温土湿传感器', 40013, 'soilTH', 'soil', '', 'online', 100.00, '2026-04-19 15:16:49', 0, '2026-04-16 22:03:46', '2026-04-16 22:03:46');
+
+-- ----------------------------
+-- Table structure for user
+-- ----------------------------
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE `user`  (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user_no` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '用户编号',
+  `open_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '微信openId',
+  `union_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '微信unionId',
+  `nickname` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `real_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `mobile` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `avatar_url` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `role_type` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'adopter',
+  `status` tinyint NOT NULL DEFAULT 1 COMMENT '1-正常 0-禁用',
+  `bind_mobile` tinyint NOT NULL DEFAULT 0,
+  `deleted` tinyint NOT NULL DEFAULT 0,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `uk_open_id`(`open_id` ASC) USING BTREE,
+  UNIQUE INDEX `uk_user_no`(`user_no` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of user
+-- ----------------------------
+INSERT INTO `user` VALUES (1, 'U100001', 'admin_openid', NULL, '管理员', '张管理', '13800000001', NULL, 'admin', 1, 1, 0, '2026-04-14 21:34:33', '2026-04-14 21:34:33');
+INSERT INTO `user` VALUES (2, 'U100002', 'operator_openid', NULL, '运营人员', '李运营', '13800000002', NULL, 'operator', 1, 1, 0, '2026-04-14 21:34:33', '2026-04-14 21:34:33');
+INSERT INTO `user` VALUES (3, 'U100003', 'stub_test_code_001', NULL, '测试用户A', '王认养', '13800000003', NULL, 'adopter', 1, 1, 0, '2026-04-14 21:34:33', '2026-04-14 21:34:33');
+INSERT INTO `user` VALUES (4, 'U2044046903141773312', 'stub_stub_test_code_001', NULL, '用户773312', NULL, NULL, NULL, 'adopter', 1, 0, 0, '2026-04-14 21:35:33', '2026-04-14 21:35:33');
+
+SET FOREIGN_KEY_CHECKS = 1;
