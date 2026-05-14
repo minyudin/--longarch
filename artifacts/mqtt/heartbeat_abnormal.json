@@ -1,0 +1,23 @@
+{
+  "ok": true,
+  "scenario": "heartbeat_abnormal",
+  "deviceNo": "ACT-1E76B4",
+  "waitSeconds": 140,
+  "quietWindowSeconds": 300,
+  "onlineSnapshot": {
+    "id": 80037,
+    "device_no": "ACT-1E76B4",
+    "device_status": "online",
+    "network_status": "online",
+    "last_heartbeat_at": "2026-04-26 01:30:49",
+    "updated_at": "2026-04-25 23:38:09"
+  },
+  "offlineSnapshot": {
+    "id": 80037,
+    "device_no": "ACT-1E76B4",
+    "device_status": "offline",
+    "network_status": "offline",
+    "last_heartbeat_at": "2026-04-26 01:30:49",
+    "updated_at": "2026-04-26 01:32:57"
+  }
+}

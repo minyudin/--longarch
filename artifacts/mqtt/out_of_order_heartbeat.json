@@ -1,0 +1,16 @@
+{
+  "ok": true,
+  "scenario": "out_of_order_heartbeat",
+  "deviceNo": "ACT-6E450D",
+  "sentTimestamps": [
+    1777138129402,
+    1777138009402,
+    1777138039402,
+    1777138069402
+  ],
+  "snapshot": {
+    "deviceStatus": "online",
+    "networkStatus": "online",
+    "lastHeartbeatAt": "2026-04-26 01:28:51"
+  }
+}

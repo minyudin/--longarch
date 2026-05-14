@@ -1,0 +1,18 @@
+﻿{
+    "stamp":  "20260427-011052",
+    "checks":  [
+                   {
+                       "name":  "fatal-execution-error",
+                       "ok":  false,
+                       "detail":  "无法连接到远程服务器"
+                   }
+               ],
+    "created":  {
+
+                },
+    "summary":  {
+                    "pass":  0,
+                    "total":  1,
+                    "allPassed":  false
+                }
+}

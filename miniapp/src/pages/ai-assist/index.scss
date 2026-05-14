@@ -1,0 +1,134 @@
+@use '@/styles/tokens' as *;
+@use '@/styles/mixins' as *;
+
+.ai-assist-page {
+  min-height: 100vh;
+  background: $paper;
+  color: $ink;
+  padding: bl(2) bl(1.5) calc(bl(7.5) + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+.ai-assist-head {
+  @include hairline-all;
+  background: $paper-light;
+  padding: bl(1.25);
+  margin-bottom: bl(1.25);
+
+  &__seal {
+    @include folio-mono;
+    color: $ink-faint;
+    font-size: 18px;
+    letter-spacing: 0.24em;
+  }
+
+  &__title {
+    display: block;
+    margin-top: bl(0.5);
+    font-family: $font-serif;
+    font-size: 44px;
+    letter-spacing: 0.12em;
+  }
+
+  &__lede {
+    display: block;
+    margin-top: bl(0.5);
+    color: $ink-soft;
+    font-size: 24px;
+  }
+}
+
+.ai-assist-thread {
+  height: 52vh;
+  @include hairline-all;
+  background: $paper-light;
+  padding: bl(1);
+  box-sizing: border-box;
+}
+
+.bubble {
+  max-width: 92%;
+  margin-bottom: bl(0.75);
+  padding: bl(0.75) bl(0.9);
+  @include hairline-all;
+
+  &--user {
+    margin-left: auto;
+    background: #ece6dc;
+  }
+
+  &--ai {
+    margin-right: auto;
+    background: #f6f2ea;
+  }
+
+  &__intent {
+    display: block;
+    @include folio-mono;
+    color: $ink-faint;
+    font-size: 18px;
+    margin-bottom: bl(0.3);
+  }
+
+  &__text {
+    display: block;
+    line-height: 1.65;
+    font-size: 27px;
+  }
+
+  &__hint {
+    display: block;
+    margin-top: bl(0.4);
+    color: $ink-soft;
+    font-size: 22px;
+  }
+}
+
+.bubble-sys {
+  text-align: center;
+  color: $ink-faint;
+  font-size: 22px;
+  margin: bl(0.75) 0;
+}
+
+.ai-assist-hints {
+  margin-top: bl(0.9);
+  display: flex;
+  flex-wrap: wrap;
+  gap: bl(0.5);
+
+  &__item {
+    @include hairline-all;
+    background: #f2ede3;
+    padding: bl(0.35) bl(0.55);
+    font-size: 22px;
+    color: $ink-soft;
+  }
+}
+
+.ai-assist-input {
+  margin-top: bl(0.9);
+  display: flex;
+  gap: bl(0.5);
+
+  &__field {
+    flex: 1;
+    @include hairline-all;
+    background: #f8f5ef;
+    padding: bl(0.65) bl(0.7);
+    font-size: 25px;
+    min-height: bl(2.3);
+    box-sizing: border-box;
+  }
+
+  &__send {
+    width: bl(4.1);
+    @include hairline-all;
+    background: #e7dfd2;
+    color: $ink;
+    font-family: $font-serif;
+    letter-spacing: 0.08em;
+    font-size: 23px;
+  }
+}
+

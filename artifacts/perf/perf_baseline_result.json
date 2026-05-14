@@ -1,0 +1,83 @@
+{
+  "durationSeconds": 10,
+  "taskMode": "all",
+  "taskModesExecuted": [
+    "normal",
+    "idempotent",
+    "non_conflict"
+  ],
+  "results": [
+    {
+      "name": "wechatLogin",
+      "total": 100,
+      "ok": 100,
+      "ok_rate": 1.0,
+      "http_non200": 0,
+      "codes": {
+        "0": 100
+      },
+      "lat_p50_ms": 15.906899934634566,
+      "lat_p95_ms": 26.455000042915344,
+      "lat_p99_ms": 29.493900015950203,
+      "lat_mean_ms": 18.083180014509708
+    },
+    {
+      "name": "createTask[normal]",
+      "total": 100,
+      "ok": 6,
+      "ok_rate": 0.06,
+      "http_non200": 0,
+      "codes": {
+        "0": 6,
+        "40015": 94
+      },
+      "lat_p50_ms": 10.762999998405576,
+      "lat_p95_ms": 22.992299869656563,
+      "lat_p99_ms": 24.871000088751316,
+      "lat_mean_ms": 12.857554988004267
+    },
+    {
+      "name": "createTask[idempotent]",
+      "total": 100,
+      "ok": 0,
+      "ok_rate": 0.0,
+      "http_non200": 0,
+      "codes": {
+        "40015": 100
+      },
+      "lat_p50_ms": 11.139699956402183,
+      "lat_p95_ms": 21.684700157493353,
+      "lat_p99_ms": 23.63030007109046,
+      "lat_mean_ms": 12.39752299617976
+    },
+    {
+      "name": "createTask[non_conflict]",
+      "total": 100,
+      "ok": 0,
+      "ok_rate": 0.0,
+      "http_non200": 0,
+      "codes": {
+        "40015": 52,
+        "40018": 48
+      },
+      "lat_p50_ms": 10.004200041294098,
+      "lat_p95_ms": 20.315200090408325,
+      "lat_p99_ms": 21.731100045144558,
+      "lat_mean_ms": 10.409471008460969
+    },
+    {
+      "name": "createAdoptionCode",
+      "total": 60,
+      "ok": 0,
+      "ok_rate": 0.0,
+      "http_non200": 0,
+      "codes": {
+        "40018": 60
+      },
+      "lat_p50_ms": 4.848599899560213,
+      "lat_p95_ms": 15.45119984075427,
+      "lat_p99_ms": 16.560700023546815,
+      "lat_mean_ms": 7.161191664636135
+    }
+  ]
+}

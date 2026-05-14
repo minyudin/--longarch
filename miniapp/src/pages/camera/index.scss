@@ -1,0 +1,109 @@
+@use '@/styles/tokens' as *;
+@use '@/styles/mixins' as *;
+
+/* ============================================================
+ *  §5 · 摄像头直播
+ *  - camera-stage: 全屏 webview 舞台
+ *  - camera-fallback: 未配置/缺 URL 时的 Folio 风占位
+ * ============================================================ */
+
+// ---- webview 舞台 · 占满屏幕 (不能和其它 Taro 组件同屏, 遵微信规则) ----
+.camera-stage {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background: #000;
+
+  // Taro 的 <WebView> 编译成微信 <web-view>, 默认就是全屏, 这里不动布局
+
+  &__err {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: bl(2) bl(3);
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    font-size: 24px;
+    text-align: center;
+    max-width: 80vw;
+  }
+}
+
+// ---- 降级占位 · 没备案域名时展示 ----
+.camera-fallback {
+  min-height: 100vh;
+  background: $paper;
+  padding: bl(3) bl(2.5) calc(bl(3) + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: bl(2.5);
+
+  &__head {
+    @include hairline-bottom;
+    padding-bottom: bl(2);
+    display: flex;
+    flex-direction: column;
+    gap: bl(0.5);
+  }
+
+  &__seal {
+    @include folio-seal;
+    color: $ink;
+    letter-spacing: 0.3em;
+    display: block;
+  }
+
+  &__title {
+    font-family: $font-serif;
+    font-size: 44px;
+    font-weight: 500;
+    color: $ink;
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    display: block;
+  }
+
+  &__sub {
+    @include folio-em;
+    font-size: 22px;
+    color: $ink-soft;
+    line-height: 1.5;
+    display: block;
+  }
+
+  &__card {
+    @include hairline-all;
+    padding: bl(2);
+    background: $paper-light;
+    display: flex;
+    flex-direction: column;
+    gap: bl(1);
+  }
+
+  &__label {
+    @include folio-seal;
+    font-size: 18px;
+    color: $ink-faint;
+    letter-spacing: 0.3em;
+    display: block;
+  }
+
+  &__url {
+    @include folio-mono;
+    font-size: 22px;
+    color: $ink;
+    word-break: break-all;
+    padding: bl(1) 0;
+    @include hairline-soft-bottom;
+    display: block;
+  }
+
+  &__hint {
+    @include folio-em;
+    font-size: 22px;
+    color: $ink-faint;
+    line-height: 1.6;
+    display: block;
+  }
+}

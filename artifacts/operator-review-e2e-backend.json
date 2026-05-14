@@ -1,0 +1,242 @@
+{
+  "base": "http://127.0.0.1:8081/api/v1",
+  "steps": [
+    {
+      "name": "adopter-login",
+      "body": {
+        "code": 0,
+        "message": "success",
+        "data": {
+          "token": "0f036cd9-c754-4cca-94c4-ccdc46006eb6",
+          "refreshToken": "e0212b549ab545d6b7d337a388264f65",
+          "expiresIn": 7200,
+          "userInfo": {
+            "userId": 625,
+            "userNo": "U2048136388481695744",
+            "nickname": "用户695744",
+            "roleType": "adopter",
+            "status": 1,
+            "bindMobile": false,
+            "roleProfile": {
+              "roleName": "认养用户",
+              "roleDesc": "查看自己认养的地块数据，发起操作申请，使用AI助手"
+            },
+            "permissions": {
+              "canViewAllPlots": false,
+              "canManagePlot": false,
+              "canManageDevice": false,
+              "canCreateTask": true,
+              "canViewOwnPlot": true,
+              "canManageAdoptionOrder": false,
+              "canViewAuditLog": false,
+              "canManageUser": false,
+              "canTakeoverTask": false
+            },
+            "menuScopes": [
+              "my_adoptions",
+              "plot_detail",
+              "sensors",
+              "cameras",
+              "ai_chat",
+              "operation_tasks"
+            ]
+          }
+        },
+        "requestId": "82ac6f68-d72e-4284-aae3-81417fd57d4f",
+        "serverTime": "2026-04-26 20:49:14"
+      }
+    },
+    {
+      "name": "allowed-actions",
+      "body": {
+        "code": 0,
+        "message": "success",
+        "data": {
+          "plotId": 40017,
+          "actions": [
+            {
+              "actionType": "irrigation_apply",
+              "actionName": "申请浇水",
+              "enabled": false,
+              "reason": "设备未在线",
+              "deviceId": 80039,
+              "deviceName": "MCP-ACT-0209",
+              "requiredParams": [
+                "durationMinutes"
+              ],
+              "optionalParams": [
+                "waterVolumeLiters",
+                "flowRate"
+              ]
+            },
+            {
+              "actionType": "fertilize_apply",
+              "actionName": "申请施肥",
+              "enabled": false,
+              "reason": "当前权限不允许",
+              "deviceId": 80039,
+              "deviceName": "MCP-ACT-0209",
+              "requiredParams": [
+                "durationMinutes",
+                "fertilizerType"
+              ],
+              "optionalParams": [
+                "concentrationPercent",
+                "volumeLiters"
+              ]
+            },
+            {
+              "actionType": "spray_apply",
+              "actionName": "申请喷淋",
+              "enabled": false,
+              "reason": "当前权限不允许",
+              "deviceId": 80039,
+              "deviceName": "MCP-ACT-0209",
+              "requiredParams": [
+                "durationMinutes"
+              ],
+              "optionalParams": [
+                "sprayType",
+                "pressureBar"
+              ]
+            }
+          ]
+        },
+        "requestId": "ad157c35-0311-411e-a6cb-45f3d268cd6d",
+        "serverTime": "2026-04-26 20:49:14"
+      }
+    },
+    {
+      "name": "create-task",
+      "body": {
+        "code": 0,
+        "message": "success",
+        "data": {
+          "taskId": 310,
+          "taskNo": "T2048383905924399104",
+          "taskStatus": "pending",
+          "deviceExecutionState": "submitted",
+          "message": "任务已提交，等待运营确认",
+          "reviewState": "operator_required",
+          "riskLevel": "medium",
+          "riskReasons": "[\"device_offline\",\"conflict_pending\"]"
+        },
+        "requestId": "843860df-1d51-4db4-91dc-b47fe22c9bfc",
+        "serverTime": "2026-04-26 20:49:14"
+      }
+    },
+    {
+      "name": "operator-login",
+      "body": {
+        "code": 0,
+        "message": "success",
+        "data": {
+          "token": "2815cc33-e4c0-4963-ae5b-0d80b92b36e1",
+          "refreshToken": "804d8ed7f217427ab35ff00de337ff45",
+          "expiresIn": 7200,
+          "userInfo": {
+            "userId": 2,
+            "userNo": "U100002",
+            "nickname": "运营人员",
+            "realName": "李运营",
+            "mobile": "13800000002",
+            "roleType": "operator",
+            "status": 1,
+            "bindMobile": true,
+            "roleProfile": {
+              "roleName": "农场运营人员",
+              "roleDesc": "维护农事记录、作物批次，处理任务执行"
+            },
+            "permissions": {
+              "canViewAllPlots": true,
+              "canManagePlot": true,
+              "canManageDevice": true,
+              "canCreateTask": true,
+              "canViewOwnPlot": true,
+              "canManageAdoptionOrder": false,
+              "canViewAuditLog": false,
+              "canManageUser": false,
+              "canTakeoverTask": false
+            },
+            "menuScopes": [
+              "dashboard",
+              "plots",
+              "crop_batches",
+              "operation_tasks",
+              "devices",
+              "farming_records"
+            ]
+          }
+        },
+        "requestId": "85fe4a2c-fff3-4e73-af9e-d049d2c116dd",
+        "serverTime": "2026-04-26 20:49:14"
+      }
+    },
+    {
+      "name": "operator-list-operator_required",
+      "body": {
+        "code": 0,
+        "message": "success",
+        "data": {
+          "list": [
+            {
+              "taskId": 310,
+              "taskNo": "T2048383905924399104",
+              "plotId": 40017,
+              "actionType": "irrigation_apply",
+              "taskStatus": "pending",
+              "deviceExecutionState": "submitted",
+              "createdAt": "2026-04-26 20:49:15",
+              "reviewState": "operator_required",
+              "riskLevel": "medium"
+            },
+            {
+              "taskId": 309,
+              "taskNo": "T2048383848756035584",
+              "plotId": 40017,
+              "actionType": "irrigation_apply",
+              "taskStatus": "pending",
+              "deviceExecutionState": "submitted",
+              "createdAt": "2026-04-26 20:49:01",
+              "reviewState": "operator_required",
+              "riskLevel": "high",
+              "assigneeUserId": 2
+            }
+          ],
+          "pageNo": 1,
+          "pageSize": 20,
+          "total": 2
+        },
+        "requestId": "605d4098-8066-4ce6-bde7-d90fe615db2b",
+        "serverTime": "2026-04-26 20:49:14"
+      }
+    },
+    {
+      "name": "operator-claim",
+      "body": {
+        "code": 0,
+        "message": "success",
+        "requestId": "956dcdf8-a1f7-456a-8590-9a7444791aaa",
+        "serverTime": "2026-04-26 20:49:15"
+      }
+    },
+    {
+      "name": "operator-approve",
+      "body": {
+        "code": 40013,
+        "message": "设备未在线，暂不可通过审核",
+        "requestId": "dcc3ac74-da13-48ab-ae31-1837c0417731",
+        "serverTime": "2026-04-26 20:49:15"
+      }
+    },
+    {
+      "name": "operator-reject",
+      "body": {
+        "code": 0,
+        "message": "success",
+        "requestId": "fb30f46c-61f1-49c7-8809-3df708b66fcb",
+        "serverTime": "2026-04-26 20:49:15"
+      }
+    }
+  ]
+}

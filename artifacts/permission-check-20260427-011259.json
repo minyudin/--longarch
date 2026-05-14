@@ -1,0 +1,73 @@
+﻿{
+    "stamp":  "20260427-011259",
+    "checks":  [
+                   {
+                       "name":  "login-admin-operator-adopter",
+                       "ok":  true,
+                       "detail":  "adminId=5,opId=632,adId=633"
+                   },
+                   {
+                       "name":  "bind-operator-to-in-scope-plot",
+                       "ok":  true,
+                       "detail":  "op=632 -\u003e plotIn=40048"
+                   },
+                   {
+                       "name":  "adopter-redeem-two-plots",
+                       "ok":  true,
+                       "detail":  "codes=LSGJ-782FAD81,LSGJ-0AFEC5C9"
+                   },
+                   {
+                       "name":  "task-created-in-and-out",
+                       "ok":  true,
+                       "detail":  "taskIn=319 review=operator_required; taskOut=320 review=operator_required"
+                   },
+                   {
+                       "name":  "operator-list-scope-filter",
+                       "ok":  true,
+                       "detail":  "hasIn=True hasOut=False"
+                   },
+                   {
+                       "name":  "operator-list-explicit-out-of-scope-plot-denied",
+                       "ok":  false,
+                       "detail":  "expect denied"
+                   },
+                   {
+                       "name":  "operator-claim-in-scope",
+                       "ok":  true,
+                       "detail":  "taskIn=319"
+                   },
+                   {
+                       "name":  "operator-claim-out-of-scope-denied",
+                       "ok":  false,
+                       "detail":  "taskOut=320"
+                   },
+                   {
+                       "name":  "operator-review-out-of-scope-denied",
+                       "ok":  false,
+                       "detail":  "taskOut=320"
+                   },
+                   {
+                       "name":  "adopter-access-operator-endpoint-denied",
+                       "ok":  false,
+                       "detail":  "expect role denied"
+                   },
+                   {
+                       "name":  "operator-mine-filter",
+                       "ok":  true,
+                       "detail":  "mineHasIn=True mineHasOut=False"
+                   }
+               ],
+    "created":  {
+                    "devInId":  80055,
+                    "devOutId":  80056,
+                    "plotInId":  40048,
+                    "taskInId":  319,
+                    "taskOutId":  320,
+                    "plotOutId":  40049
+                },
+    "summary":  {
+                    "pass":  7,
+                    "total":  11,
+                    "allPassed":  false
+                }
+}
