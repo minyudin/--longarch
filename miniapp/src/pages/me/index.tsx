@@ -135,21 +135,23 @@ export default function MePage() {
             <Text className='me-nav__arrow'>→</Text>
           </View>
         ) : null}
-        <View className='me-nav' onClick={() => showSoon('消息通知')}>
+        {/* §02 · 设置: 当前版本未启用的占位项统一走 `me-nav--soon` 灰度样式, */}
+        {/* 右侧以 "即将上线" 小标代替箭头, 避免用户误以为是可用但坏掉的入口. */}
+        <View className='me-nav me-nav--soon' onClick={() => showSoon('消息通知')}>
           <Text className='me-nav__key'>消息通知</Text>
-          <Text className='me-nav__arrow'>→</Text>
+          <Text className='me-nav__flag'>即将上线</Text>
         </View>
-        <View className='me-nav' onClick={() => showSoon('服务协议')}>
+        <View className='me-nav me-nav--soon' onClick={() => showSoon('服务协议')}>
           <Text className='me-nav__key'>服务协议</Text>
-          <Text className='me-nav__arrow'>→</Text>
+          <Text className='me-nav__flag'>即将上线</Text>
         </View>
-        <View className='me-nav' onClick={() => showSoon('隐私政策')}>
+        <View className='me-nav me-nav--soon' onClick={() => showSoon('隐私政策')}>
           <Text className='me-nav__key'>隐私政策</Text>
-          <Text className='me-nav__arrow'>→</Text>
+          <Text className='me-nav__flag'>即将上线</Text>
         </View>
-        <View className='me-nav' onClick={() => showSoon('关于陇上管家')}>
+        <View className='me-nav me-nav--soon' onClick={() => showSoon('关于陇上管家')}>
           <Text className='me-nav__key'>关于</Text>
-          <Text className='me-nav__arrow'>→</Text>
+          <Text className='me-nav__flag'>即将上线</Text>
         </View>
       </View>
 
@@ -201,5 +203,5 @@ function maskMobile(mobile: string): string {
 }
 
 function showSoon(name: string) {
-  Taro.showToast({ title: `${name} · 敬请期待`, icon: 'none', duration: 1500 })
+  Taro.showToast({ title: `${name} · 即将上线`, icon: 'none', duration: 1500 })
 }

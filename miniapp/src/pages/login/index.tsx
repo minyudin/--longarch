@@ -3,7 +3,7 @@ import Taro, { useLoad, useUnload } from '@tarojs/taro'
 import { useMemo, useRef, useState } from 'react'
 import { wechatLogin } from '@/api/auth'
 import { useAuthStore } from '@/store/auth'
-import { getCurrentSolarTerm } from '@/lib/solar-terms'
+import TermStamp from '@/components/TermStamp'
 import './index.scss'
 
 /**
@@ -83,8 +83,6 @@ export default function LoginPage() {
   const setAuth = useAuthStore((s) => s.setAuth)
   // N1+N2 · ref 瞬时锁, 比 state 早一帧生效; 成功路径保持锁到 switchTab 生效
   const loadingRef = useRef(false)
-  // 当前节气 + 农谚 · 让封面每月打开长得不一样 (2026-04-29 前后看到 "谷雨")
-  const term = useMemo(() => getCurrentSolarTerm(), [])
   // S3 · 登录成功后 320ms 的导航延迟若期间触发 40002 会清 token,
   //      http.ts 拦截器会另发起 redirectTo('/pages/login'), 两次 navigation 互相覆盖,
   //      真机表现为 "登录成功闪一下又弹回登录页". 用 ref 管 timer + 跳转前再校 token.
@@ -221,8 +219,7 @@ export default function LoginPage() {
         </Text>
         {/* 节气印章 · 让封面按月呼吸, 每月进入都看到不同的时节标记 */}
         <View className='login-cover__term'>
-          <Text className='login-cover__term-mark'>〈 {term.name} 〉</Text>
-          <Text className='login-cover__term-saying'>— {term.saying}</Text>
+          <TermStamp />
         </View>
       </View>
 
@@ -256,7 +253,7 @@ export default function LoginPage() {
       {/* --- 错误提示 --- */}
       {errMsg ? <Text className='login-err'>! {errMsg}</Text> : null}
 
-      {/* --- 底部 CTA --- */}
+      {/* --- 底部 CTA · 主印章 + 3 个编号入口 --- */}
       <View className='login-bottom'>
         <Button
           className='login-cta'
@@ -270,12 +267,21 @@ export default function LoginPage() {
           <Text className='login-cta__arrow'>→</Text>
         </Button>
 
+        <View className='login-alt'>
+          <Text className='login-alt__seal'>§ · 其他身份</Text>
+          <Text className='login-alt__sub'>stub · dev</Text>
+        </View>
+
         <Button
           className='login-adopter'
           disabled={loading}
           onClick={() => Taro.navigateTo({ url: '/pages/adopter-login/index' })}
         >
-          <Text className='login-adopter__text'>认养用户入口</Text>
+          <Text className='login-adopter__no'>§ 01</Text>
+          <View className='login-adopter__body'>
+            <Text className='login-adopter__text'>认养用户</Text>
+            <Text className='login-adopter__sub'>名下已有地块 · adopter</Text>
+          </View>
           <Text className='login-adopter__arrow'>→</Text>
         </Button>
 
@@ -284,7 +290,11 @@ export default function LoginPage() {
           disabled={loading}
           onClick={() => Taro.navigateTo({ url: '/pages/operator-login/index' })}
         >
-          <Text className='login-operator__text'>操作员入口</Text>
+          <Text className='login-operator__no'>§ 02</Text>
+          <View className='login-operator__body'>
+            <Text className='login-operator__text'>操作员</Text>
+            <Text className='login-operator__sub'>维护地块 · 审核任务 · operator</Text>
+          </View>
           <Text className='login-operator__arrow'>→</Text>
         </Button>
 
@@ -293,15 +303,29 @@ export default function LoginPage() {
           disabled={loading}
           onClick={() => Taro.navigateTo({ url: '/pages/guest-login/index' })}
         >
-          <Text className='login-guest__text'>分享码访问</Text>
+          <Text className='login-guest__no'>§ 03</Text>
+          <View className='login-guest__body'>
+            <Text className='login-guest__text'>分享码访问</Text>
+            <Text className='login-guest__sub'>朋友转来的一次性码 · guest</Text>
+          </View>
           <Text className='login-guest__arrow'>→</Text>
         </Button>
 
         <Text className='login-terms'>
           继续即同意{' '}
-          <Text className='login-link'>服务协议</Text>
+          <Text
+            className='login-link login-link--soon'
+            onClick={() => Taro.showToast({ title: '服务协议 · 即将上线', icon: 'none', duration: 1500 })}
+          >
+            服务协议
+          </Text>
           {'  ·  '}
-          <Text className='login-link'>隐私政策</Text>
+          <Text
+            className='login-link login-link--soon'
+            onClick={() => Taro.showToast({ title: '隐私政策 · 即将上线', icon: 'none', duration: 1500 })}
+          >
+            隐私政策
+          </Text>
         </Text>
       </View>
     </View>

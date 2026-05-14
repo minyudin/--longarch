@@ -184,6 +184,14 @@ export interface OperationTaskDetail {
   startedAt: string | null
   finishedAt: string | null
   cancelable: boolean
+  /** 运营审核链路 · 后端 TaskDetailVO 的 reviewState (none / operator_required / approved / rejected) */
+  reviewState?: string | null
+  /** 风险级别 low/medium/high, 由后端风险门控写入 */
+  riskLevel?: string | null
+  /** 命中的风险标签 (逗号分隔字符串, 后端原样透传) */
+  riskReasons?: string | null
+  /** 认领该任务的运营员 userId, null 表示未被任何人认领 */
+  assigneeUserId?: number | null
 }
 
 /** 轮询排队状态 */

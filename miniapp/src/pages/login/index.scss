@@ -63,37 +63,12 @@
     display: block;
   }
 
-  // ---- 节气印章 · 农事感的落脚点 ----
-  //   样式参考: 古籍版心 · 书页天头的卷号印章
-  //   · 〈 谷雨 〉用 farm-green, serif 加粗 · 像"卷二十四"印鉴
-  //   · 配套农谚用 serif italic · 像章节后的小注
+  // ---- 节气印章占位 · 内部由 TermStamp 组件控制外观 ----
   &__term {
     margin-top: bl(1.1);
     padding-top: bl(0.9);
     @include hairline-soft-top;
     display: flex;
-    align-items: baseline;
-    gap: bl(0.85);
-    flex-wrap: wrap;
-  }
-
-  &__term-mark {
-    font-family: $font-serif;
-    font-size: 22px;
-    font-weight: 600;
-    color: $farm-green;
-    letter-spacing: 0.06em;
-    line-height: 1;
-  }
-
-  &__term-saying {
-    font-family: $font-serif;
-    font-style: italic;
-    font-size: 18px;
-    font-weight: 400;
-    color: $ink-soft;
-    letter-spacing: 0.02em;
-    line-height: 1.3;
   }
 }
 
@@ -273,19 +248,43 @@
   }
 }
 
+// 次级入口分组的 hairline 标题行 · "§ · 其他身份"
+.login-alt {
+  @include hairline-soft-top;
+  padding-top: bl(0.7);
+  margin-top: bl(0.3);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+
+  &__seal {
+    @include folio-seal;
+    font-size: 14px;
+    color: $ink-soft;
+    letter-spacing: 0.3em;
+  }
+  &__sub {
+    @include folio-mono;
+    font-size: 11px;
+    color: $ink-faint;
+    letter-spacing: 0.18em;
+  }
+}
+
 // 次级入口 · 认养 / 操作员 / 分享码 — 共享样式 + 不同色调 accent
 %login-secondary {
   @include button-reset;
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: bl(1.1);
-  padding: bl(1.35) bl(1.8);
+  gap: bl(1);
+  padding: bl(1.1) bl(1.5);
   color: $ink;
   border-radius: 2px;
   @include hairline-all;
   border-color: $line;
   background: $paper-light;
+  text-align: left;
 
   &::after { content: none; border: none; }
 
@@ -293,58 +292,66 @@
   &[disabled] { color: $ink-faint; }
 }
 
+// 次级入口通用装饰块 (§ 编号 + 正副文 + 箭头)
+%login-secondary-no {
+  @include folio-mono;
+  font-size: 14px;
+  letter-spacing: 0.22em;
+  color: $ink-soft;
+}
+%login-secondary-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+%login-secondary-text {
+  font-family: $font-serif;
+  font-size: 22px;
+  font-weight: 500;
+  color: $ink;
+  letter-spacing: 0.04em;
+}
+%login-secondary-sub {
+  font-family: $font-sans;
+  font-size: 14px;
+  color: $ink-faint;
+  letter-spacing: 0.02em;
+}
+%login-secondary-arrow {
+  font-family: $font-serif;
+  font-size: 20px;
+  color: $ink-soft;
+}
+
 .login-adopter {
   @extend %login-secondary;
-
-  &__text {
-    font-family: $font-sans;
-    font-size: 18px;
-    font-weight: 500;
-    color: $ink;
-    letter-spacing: 0.02em;
-  }
-
-  &__arrow {
-    font-family: $font-serif;
-    font-size: 22px;
-    color: $ink-soft;
-  }
+  &__no    { @extend %login-secondary-no; }
+  &__body  { @extend %login-secondary-body; }
+  &__text  { @extend %login-secondary-text; }
+  &__sub   { @extend %login-secondary-sub; }
+  &__arrow { @extend %login-secondary-arrow; }
 }
 
 .login-operator {
   @extend %login-secondary;
-
-  &__text {
-    font-family: $font-sans;
-    font-size: 18px;
-    font-weight: 500;
-    color: $ink;
-    letter-spacing: 0.02em;
-  }
-
-  &__arrow {
-    font-family: $font-serif;
-    font-size: 22px;
-    color: $ink-soft;
-  }
+  border-color: color.adjust($farm-earth, $lightness: 30%);
+  background: color.mix($paper-light, $farm-earth, 94%);
+  &__no    { @extend %login-secondary-no; color: $farm-earth; }
+  &__body  { @extend %login-secondary-body; }
+  &__text  { @extend %login-secondary-text; }
+  &__sub   { @extend %login-secondary-sub; }
+  &__arrow { @extend %login-secondary-arrow; }
 }
 
 .login-guest {
   @extend %login-secondary;
-
-  &__text {
-    font-family: $font-sans;
-    font-size: 18px;
-    font-weight: 500;
-    color: $ink;
-    letter-spacing: 0.02em;
-  }
-
-  &__arrow {
-    font-family: $font-serif;
-    font-size: 22px;
-    color: $ink-soft;
-  }
+  opacity: 0.88;
+  &__no    { @extend %login-secondary-no; }
+  &__body  { @extend %login-secondary-body; }
+  &__text  { @extend %login-secondary-text; }
+  &__sub   { @extend %login-secondary-sub; }
+  &__arrow { @extend %login-secondary-arrow; }
 }
 
 .login-terms {
@@ -361,4 +368,11 @@
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 0.2em;
+
+  // 尚未接入正式协议页的占位态: 去下划线 + 置灰,
+  // 仍保留点击响应 (toast "即将上线"), 避免被误以为断链.
+  &--soon {
+    color: $ink-faint;
+    text-decoration: none;
+  }
 }

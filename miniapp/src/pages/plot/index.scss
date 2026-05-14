@@ -241,10 +241,20 @@
   display: flex;
   flex-direction: column;
   gap: bl(0.25);
+  position: relative;
   @include hairline-soft-bottom;
 
   &:nth-child(odd) {
     @include hairline-soft-right;
+  }
+
+  // label + 迷你 sparkline 同一行
+  &__top {
+    display: grid;
+    grid-template-columns: 1fr bl(4.5);
+    align-items: center;
+    gap: bl(0.75);
+    min-height: bl(1.8);
   }
 
   &__label {
@@ -334,12 +344,52 @@
     color: $clay;
   }
 
+  // 告警脉冲 · 右上 6×6 墨点呼吸, 柔和不抢视线
+  &--alert::before {
+    content: '';
+    position: absolute;
+    top: bl(0.75);
+    right: bl(0.75);
+    width: 8px;
+    height: 8px;
+    background: $clay;
+    animation: sensor-cell-pulse 1.8s $ease-breath infinite;
+    pointer-events: none;
+  }
+
   &__time {
     @include folio-mono;
     font-size: 14px;
     color: $ink-faint;
     letter-spacing: 0.1em;
     margin-top: bl(0.25);
+  }
+}
+
+@keyframes sensor-cell-pulse {
+  0%, 100% { opacity: 0.35; transform: scale(1); }
+  50%      { opacity: 1;    transform: scale(1.2); }
+}
+
+// ---- 迷你 sparkline (cell 内嵌) ----
+.spark {
+  width: 100%;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  overflow: hidden;
+
+  &__svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  &__dash {
+    @include folio-mono;
+    font-size: 14px;
+    color: $ink-faint;
+    letter-spacing: 0.2em;
   }
 }
 
@@ -521,50 +571,94 @@
   }
 }
 
-// ---- 底部 CTA · 双按钮 (问 AI + 申请操作) ----
+// ---- 底部 CTA · 三等分栅格 (问 AI · 申请操作 · 分享码) ----
 .plot-ctas {
-  margin-top: bl(2);
+  margin-top: bl(2.5);
+  padding-top: bl(1);
+  @include hairline-soft-top;
   display: grid;
-  grid-template-columns: 1fr 1.2fr 1fr;
+  grid-template-columns: 1fr 1.35fr 1fr;
   gap: bl(1);
+
+  &--guest {
+    grid-template-columns: 1fr;
+    gap: bl(1);
+  }
+
+  &__guest-note {
+    @include folio-em;
+    font-size: 20px;
+    color: $ink-faint;
+    text-align: center;
+    padding: bl(0.5) 0;
+  }
 }
 
 .plot-cta {
   @include button-reset;
-  padding: bl(1.5) bl(2);
-  background: $ink;
-  color: $paper;
+  padding: bl(1.5) bl(1.5);
+  background: $paper-light;
+  color: $ink;
+  @include hairline-all;
+  border-color: $line;
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: center;
-  gap: bl(1);
+  gap: bl(0.5);
   transition: background 0.2s $ease-folio;
 
   &::after { content: none; border: none; }
-  &:active:not([disabled]) { background: $ink-soft; }
+  &:active:not([disabled]) { background: $paper-deep; }
 
-  &--ghost {
-    background: $paper-light;
-    color: $ink;
-    @include hairline-all;
-    border-color: $line;
-    &:active:not([disabled]) { background: $paper-deep; }
-    .plot-cta__text,
-    .plot-cta__arrow { color: $ink; }
+  &__label {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__seal {
+    @include folio-mono;
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    color: $ink-faint;
+    line-height: 1;
+
+    &--light { color: rgba(241, 239, 234, 0.72); }
   }
 
   &__text {
-    font-family: $font-sans;
-    font-size: 22px;
-    font-weight: 600;
+    font-family: $font-serif;
+    font-size: 26px;
+    font-weight: 500;
     letter-spacing: 0.04em;
-    color: $paper;
+    color: $ink;
+    line-height: 1.1;
   }
 
   &__arrow {
     font-family: $font-serif;
-    font-size: 26px;
-    color: $paper;
+    font-size: 28px;
+    color: $ink-soft;
     text-align: right;
+
+    &--light { color: $paper-light; }
+  }
+
+  // 主按钮 · 墨底 · 比两侧高一个 step (grid 里 1.35fr 让它更宽)
+  &--primary {
+    background: $ink;
+    color: $paper;
+    border-color: $ink;
+    .plot-cta__text { color: $paper; }
+
+    &:active:not([disabled]) { background: $ink-soft; border-color: $ink-soft; }
+  }
+
+  // 旧 ghost 变体 · 现在和默认样式一致, 保留类名向后兼容
+  &--ghost {
+    background: $paper-light;
+    color: $ink;
   }
 }

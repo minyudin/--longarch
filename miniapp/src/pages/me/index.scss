@@ -190,6 +190,23 @@
     color: $ink-faint;
     text-align: right;
   }
+
+  // §02 设置区中尚未接入的占位项: 整行灰度, 去除点击反馈,
+  // 右侧以衬线 "即将上线" 小标代替箭头, 和可用行在视觉上拉开层级.
+  &--soon {
+    opacity: 0.55;
+    cursor: default;
+    &:active { background: transparent; }
+    .me-nav__key { color: $ink-faint; }
+  }
+
+  &__flag {
+    @include folio-mono;
+    font-size: 18px;
+    letter-spacing: 0.12em;
+    color: $ink-faint;
+    text-align: right;
+  }
 }
 
 // ---- 退出按钮 · 描边 clay 告警色 ----

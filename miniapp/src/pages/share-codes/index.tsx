@@ -172,7 +172,8 @@ export default function ShareCodesPage() {
           <Text className='share-empty'>— 暂无分享码 —</Text>
         ) : null}
         {list.map((item) => (
-          <View key={item.codeId} className='share-card'>
+          <View key={item.codeId} className={`share-card ${item.status !== 'active' ? 'share-card--revoked' : ''}`}>
+            {item.status !== 'active' ? <View className='share-void'>CANCELLED</View> : null}
             <View className='share-card__top'>
               <Text className='share-card__code'>{item.code}</Text>
               <Text className={`share-card__status share-card__status--${item.status === 'active' ? 'active' : 'revoked'}`}>

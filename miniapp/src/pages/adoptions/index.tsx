@@ -9,6 +9,7 @@ import { TAB_BAR_SYNC_EVT } from '@/custom-tab-bar/events'
 import { useRequireRole } from '@/hooks/useRequireRole'
 import { usePageRefresh } from '@/hooks/usePageRefresh'
 import { cropGlyph } from '@/lib/crop-glyph'
+import PlotMicroBar from '@/components/PlotMicroBar'
 import './index.scss'
 
 /**
@@ -223,6 +224,7 @@ export default function AdoptionsPage() {
                     </Text>
                   </View>
                   <Text className='plot-card__period'>{fmtAdoptionPeriod(item)}</Text>
+                  <PlotMicroBar plotId={item.plotId} />
                 </View>
 
                 {/* 右: 状态 tag */}

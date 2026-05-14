@@ -1,6 +1,6 @@
 import { View, Text, Button } from '@tarojs/components'
 import Taro, { useRouter, usePullDownRefresh } from '@tarojs/taro'
-import { useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { usePageRefresh } from '@/hooks/usePageRefresh'
 import GrowthStageBar from '@/components/GrowthStageBar'
 import {
@@ -11,6 +11,7 @@ import {
 import {
   getPlotDetail,
   getSensorSummary,
+  getSensorList,
   getFarmingRecords,
   getOperationLogs,
 } from '@/api/plot'
@@ -18,6 +19,7 @@ import { getLatestAnalysis, triggerAnalysis } from '@/api/ai'
 import { useAuthStore } from '@/store/auth'
 import type {
   PlotDetail,
+  Sensor,
   SensorSummary,
   FarmingRecord,
   OperationTaskListItem,
@@ -25,6 +27,9 @@ import type {
   AiAnalysis,
 } from '@/types'
 import SensorChart from './SensorChart'
+import SensorCellSpark from './SensorCellSpark'
+import ChapterIndex from '@/components/ChapterIndex'
+import SectionFin from '@/components/SectionFin'
 import './index.scss'
 
 /**
@@ -72,12 +77,19 @@ export default function PlotPage() {
 
   const [detail, setDetail] = useState<PlotDetail | null>(null)
   const [sensors, setSensors] = useState<SensorSummary | null>(null)
+  const [sensorList, setSensorList] = useState<Sensor[]>([])
   const [records, setRecords] = useState<FarmingRecord[]>([])
   const [logs, setLogs] = useState<OperationTaskListItem[]>([])
   const [analysis, setAnalysis] = useState<AiAnalysis | null>(null)
   const [analyzing, setAnalyzing] = useState(false)
   const [loading, setLoading] = useState(false)
   const [err, setErr] = useState('')
+  // Chapter index 当前章节 (0~4 对应 §01~§05)
+  const [activeChapter, setActiveChapter] = useState(0)
+  const roleType = useAuthStore((s) => s.userInfo?.roleType)
+  const isGuest = roleType === 'guest'
+
+  // guest 无"申请操作"和"分享码" CTA, 只剩"问 AI"
 
   // M4 · ref 瞬时锁 + refresh 代际守卫
   const analyzingRef = useRef(false)
@@ -108,17 +120,19 @@ export default function PlotPage() {
     setLoading(true)
     setErr('')
     try {
-      const [d, s, r, l, a] = await Promise.all([
+      const [d, s, r, l, a, slist] = await Promise.all([
         getPlotDetail(plotId),
         getSensorSummary(plotId).catch(() => null),
         getFarmingRecords(plotId, 1, 5).catch(() => null),
         getOperationLogs(plotId, 1, 5).catch(() => null),
         getLatestAnalysis(plotId).catch(() => null),
+        getSensorList(plotId).catch(() => [] as Sensor[]),
       ])
       // 代际守卫: 期间有更新的 refresh 就丢弃本次结果
       if (seq !== refreshSeqRef.current) return
       setDetail(d)
       setSensors(s)
+      setSensorList(slist || [])
       setRecords(r?.list || [])
       setLogs(l?.list || [])
       // FIX · handleAnalyzeAgain 在跑时 (触发 LLM 可能 10s+), 这里 getLatestAnalysis
@@ -191,6 +205,19 @@ export default function PlotPage() {
         ) : null}
       </View>
 
+      {/* --- 章节目录 · 纯装饰 hairline nav --- */}
+      <ChapterIndex
+        items={[
+          { seal: '§ 01', label: '批次' },
+          { seal: '§ 02', label: '当前' },
+          { seal: '§ 03', label: '历史' },
+          { seal: '§ 04', label: '农事' },
+          { seal: '§ 05', label: '操作' },
+        ]}
+        activeIndex={activeChapter}
+        onJump={(idx) => setActiveChapter(idx)}
+      />
+
       {err ? <Text className='plot-page__err'>! {err}</Text> : null}
 
       {/* --- §00 AI 分析结论 (如果有) --- */}
@@ -251,6 +278,7 @@ export default function PlotPage() {
             <MetaRow k='预计收获' v={cropBatch.expectedHarvestAt.slice(0, 10)} mono />
           ) : null}
           <MetaRow k='批次号' v={cropBatch.batchNo} mono />
+          <SectionFin seal='§ 01' meta={cropBatch.cropName || ''} time={cropBatch.sowingAt?.slice(5, 10)} />
         </View>
       ) : !loading && detail ? (
         <View className='plot-section'>
@@ -264,7 +292,13 @@ export default function PlotPage() {
         <Text className='plot-section__title'>§ 02 · 传感数据 · 当前</Text>
         {sensors && sensors.summary && sensors.summary.length > 0 ? (
           <View className='sensor-grid'>
-            {sensors.summary.map((s) => {
+            {(() => {
+              // sensorType → sensorId 映射 (从 /plots/{id}/sensors 拉来), 供 mini sparkline 拿 history 用
+              const idByType = new Map<string, number>()
+              sensorList.forEach((s) => {
+                if (s.sensorType && s.sensorId != null) idByType.set(s.sensorType, s.sensorId)
+              })
+              return sensors.summary.map((s) => {
               // 阈值检测: 已知传感器类型 → 渲染色带 · 未知类型 → 仅数字
               const threshold = resolveThreshold(s.sensorType)
               const num = typeof s.value === 'number' ? s.value : Number(s.value)
@@ -276,14 +310,21 @@ export default function PlotPage() {
                   key={s.sensorType}
                   className={`sensor-cell ${alert ? 'sensor-cell--alert' : ''}`}
                 >
-                  <Text className='sensor-cell__label'>
-                    {s.label || sensorLabel(s.sensorType)}
-                  </Text>
+                  <View className='sensor-cell__top'>
+                    <Text className='sensor-cell__label'>
+                      {s.label || sensorLabel(s.sensorType)}
+                    </Text>
+                    <SensorCellSpark
+                      sensorId={idByType.get(s.sensorType) ?? null}
+                      sensorType={s.sensorType}
+                      alert={alert}
+                    />
+                  </View>
                   <View className='sensor-cell__value'>
                     <Text className='sensor-cell__num'>
                       {hasNum ? String(s.value) : '—'}
                     </Text>
-                    {s.unit ? (
+                    {s.unit && s.unit !== '-' ? (
                       <Text className='sensor-cell__unit'>{s.unit}</Text>
                     ) : null}
                   </View>
@@ -306,11 +347,19 @@ export default function PlotPage() {
                   </Text>
                 </View>
               )
-            })}
+            })
+            })()}
           </View>
         ) : (
           <Text className='plot-empty'>— 暂无传感器数据 —</Text>
         )}
+        {sensors && sensors.summary && sensors.summary.length > 0 ? (
+          <SectionFin
+            seal='§ 02'
+            meta={`${sensors.summary.length} readings`}
+            time={sensors.summary[0]?.sampleAt?.slice(5, 16)}
+          />
+        ) : null}
       </View>
 
       {/* --- §03 传感器 · 历史曲线 --- */}
@@ -318,6 +367,7 @@ export default function PlotPage() {
         <View className='plot-section'>
           <Text className='plot-section__title'>§ 03 · 传感数据 · 历史</Text>
           <SensorChart plotId={plotId} sensors={sensors} />
+          <SectionFin seal='§ 03' meta='24h · 7d · 30d' />
         </View>
       ) : null}
 
@@ -347,6 +397,9 @@ export default function PlotPage() {
         ) : (
           <Text className='plot-empty'>— 暂无农事记录 —</Text>
         )}
+        {records.length > 0 ? (
+          <SectionFin seal='§ 04' meta={`${records.length} entries`} />
+        ) : null}
       </View>
 
       {/* --- §05 最近操作 --- */}
@@ -385,26 +438,47 @@ export default function PlotPage() {
         ) : (
           <Text className='plot-empty'>— 暂无操作记录 —</Text>
         )}
+        {logs.length > 0 ? (
+          <SectionFin seal='§ 05' meta={`${logs.length} tasks`} time={logs[0]?.createdAt?.slice(5, 16)} />
+        ) : null}
       </View>
 
-      {/* --- 底部 CTA · 问 AI + 申请操作 --- */}
-      <View className='plot-ctas'>
-        <Button
-          className='plot-cta plot-cta--ghost'
-          onClick={openAiChat}
-        >
-          <Text className='plot-cta__text'>问 AI</Text>
-          <Text className='plot-cta__arrow'>→</Text>
-        </Button>
-        <Button className='plot-cta' onClick={openTaskPage}>
-          <Text className='plot-cta__text'>申请操作</Text>
-          <Text className='plot-cta__arrow'>→</Text>
-        </Button>
-        <Button className='plot-cta plot-cta--ghost' onClick={openShareCodes}>
-          <Text className='plot-cta__text'>分享码</Text>
-          <Text className='plot-cta__arrow'>→</Text>
-        </Button>
-      </View>
+      {/* --- 底部 CTA · 主 "申请操作" + 侧 "问 AI" / "分享码" · guest 只剩问 AI --- */}
+      {isGuest ? (
+        <View className='plot-ctas plot-ctas--guest'>
+          <Text className='plot-ctas__guest-note'>
+            § GUEST · 仅浏览. 操作权限不开放给分享访问者.
+          </Text>
+          <Button className='plot-cta plot-cta--ghost' onClick={openAiChat}>
+            <Text className='plot-cta__text'>问 AI</Text>
+            <Text className='plot-cta__arrow'>→</Text>
+          </Button>
+        </View>
+      ) : (
+        <View className='plot-ctas'>
+          <Button className='plot-cta plot-cta--ghost' onClick={openAiChat}>
+            <View className='plot-cta__label'>
+              <Text className='plot-cta__seal'>§ AI</Text>
+              <Text className='plot-cta__text'>问 AI</Text>
+            </View>
+            <Text className='plot-cta__arrow'>→</Text>
+          </Button>
+          <Button className='plot-cta plot-cta--primary' onClick={openTaskPage}>
+            <View className='plot-cta__label'>
+              <Text className='plot-cta__seal plot-cta__seal--light'>§ ACT</Text>
+              <Text className='plot-cta__text'>申请操作</Text>
+            </View>
+            <Text className='plot-cta__arrow plot-cta__arrow--light'>→</Text>
+          </Button>
+          <Button className='plot-cta plot-cta--ghost' onClick={openShareCodes}>
+            <View className='plot-cta__label'>
+              <Text className='plot-cta__seal'>§ SHR</Text>
+              <Text className='plot-cta__text'>分享码</Text>
+            </View>
+            <Text className='plot-cta__arrow'>→</Text>
+          </Button>
+        </View>
+      )}
     </View>
   )
 }

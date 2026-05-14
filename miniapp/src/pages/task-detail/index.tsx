@@ -4,20 +4,67 @@ import { useRef, useState } from 'react'
 import { usePageRefresh } from '@/hooks/usePageRefresh'
 import { getTaskDetail, getQueueStatus, cancelTask } from '@/api/task'
 import type { OperationTaskDetail, TaskStatusValue } from '@/types'
+import SectionFin from '@/components/SectionFin'
 import './index.scss'
 
 /**
- * §4.1 · 任务详情 + 轮询状态机
+ * §4.1 · 任务详情 · 派工单印刷页
  * ============================================================
- *  入口: /pages/task-detail/index?taskId=N
+ *  页面被重新设计成"一张盖完章的纸质派工单":
  *
- *  轮询策略:
- *    · pending/queued/running → 每 3 秒轮询
- *    · success/failed/cancelled (终态) → 停止
- *    · 页面 unload 时也停止
+ *    ┌──────────────────────────────────────────┐
+ *    │ § 04 · WORK ORDER / 派 工 单             │
+ *    ├──────────────────────────────────────────┤
+ *    │ T 2053855648671731712                    │ ← 票据编号, 大号等宽
+ *    ├──────────────────────────────────────────┤
+ *    │ 申请浇水 · irrigation_apply              │
+ *    │ [STATUS PILL] · risk: LOW               │
+ *    ├──────────────────────────────────────────┤
+ *    │ 提交  ◼   审核  ◑   排队  ◯   执行  ◯   完成  ◯│
+ *    ├──────────────────────────────────────────┤
+ *    │ 操作   · 申请浇水                         │
+ *    │ 地块   · #40053                          │
+ *    │ 设备   · #80061                          │
+ *    │ 调度   · asap                            │
+ *    │ 提交   · 2026-05-11 23:12:00             │
+ *    │ 完成   · —                               │
+ *    ├──────────────────────────────────────────┤
+ *    │                 § PASSED / 05-11 23:16   │ ← success 时的盖章
+ *    └──────────────────────────────────────────┘
+ *
+ *  轮询策略 (未改):
+ *    · pending/queued/running/operator_required → 每 3 秒轮询
+ *    · success/failed/cancelled → 停止
  * ============================================================ */
 
-const STATUS_STEPS: TaskStatusValue[] = ['pending', 'queued', 'running', 'success']
+// 6 段状态机: submit → review? → queue → run → done
+type TimelineStep =
+  | 'submit'
+  | 'review'
+  | 'queue'
+  | 'run'
+  | 'done'
+
+interface StepDef {
+  key: TimelineStep
+  label: string
+  sub: string
+}
+
+const STEPS_WITH_REVIEW: StepDef[] = [
+  { key: 'submit', label: '提交', sub: 'SUBMIT' },
+  { key: 'review', label: '审核', sub: 'REVIEW' },
+  { key: 'queue',  label: '排队', sub: 'QUEUE' },
+  { key: 'run',    label: '执行', sub: 'RUN' },
+  { key: 'done',   label: '完成', sub: 'DONE' },
+]
+
+const STEPS_AUTO: StepDef[] = [
+  { key: 'submit', label: '提交', sub: 'SUBMIT' },
+  { key: 'queue',  label: '排队', sub: 'QUEUE' },
+  { key: 'run',    label: '执行', sub: 'RUN' },
+  { key: 'done',   label: '完成', sub: 'DONE' },
+]
 
 const STATUS_LABEL: Record<TaskStatusValue, string> = {
   pending: '待处理',
@@ -28,17 +75,41 @@ const STATUS_LABEL: Record<TaskStatusValue, string> = {
   cancelled: '已取消',
 }
 
-const STATUS_HINT: Record<TaskStatusValue, string> = {
-  pending: '调度中心正在评估',
-  queued: '已进入执行队列, 等待设备空闲',
-  running: '硬件正在执行中',
-  success: '任务已成功完成',
-  failed: '任务执行失败',
-  cancelled: '任务已取消',
+const STATUS_TONE: Record<TaskStatusValue, string> = {
+  pending: 'waiting',
+  queued: 'waiting',
+  running: 'running',
+  success: 'success',
+  failed: 'fail',
+  cancelled: 'cancel',
 }
 
 function isTerminal(status: TaskStatusValue): boolean {
   return status === 'success' || status === 'failed' || status === 'cancelled'
+}
+
+/**
+ * 根据 task 当前 taskStatus + reviewState 确定进度条激活到第几段.
+ * review_state 为 operator_required → 卡在 review 段;
+ * reviewState=approved 则放行, 走回 queue/run/done.
+ */
+function resolveActiveStep(d: OperationTaskDetail, hasReview: boolean): TimelineStep {
+  const st = d.taskStatus
+  const rv = (d.reviewState || 'none').toLowerCase()
+  if (st === 'success') return 'done'
+  if (st === 'failed' || st === 'cancelled') return 'done' // fail/cancel 也终态
+  if (hasReview && rv === 'operator_required') return 'review'
+  if (st === 'running') return 'run'
+  if (st === 'queued') return 'queue'
+  return 'submit'
+}
+
+// 小 utility: 把 "2026-05-11 23:16:21" → "2026·05·11 · 23:16"
+function fmtDot(ts: string | null | undefined): string {
+  if (!ts) return '—'
+  const dateA = ts.slice(0, 10).replace(/-/g, ' · ')
+  const timeA = ts.slice(11, 16)
+  return `${dateA}  ${timeA}`
 }
 
 export default function TaskDetailPage() {
@@ -51,9 +122,7 @@ export default function TaskDetailPage() {
   const [cancelling, setCancelling] = useState(false)
 
   const pollTimer = useRef<ReturnType<typeof setInterval> | null>(null)
-  // H1 · setInterval 回调里读不到最新 state (closure stale), 用 ref 做单一真相源
   const detailRef = useRef<OperationTaskDetail | null>(null)
-  // M4 · 防止双击取消的瞬时锁 (state 更新有一帧延迟)
   const cancellingRef = useRef(false)
 
   function applyDetail(d: OperationTaskDetail) {
@@ -61,9 +130,6 @@ export default function TaskDetailPage() {
     setDetail(d)
   }
 
-  // G1 · usePageRefresh 管 useLoad + useDidShow (自动跳首次 show, 避免双拉).
-  //      用户从其他页面返回详情页时自动刷新 (例如取消任务后返回).
-  // S2 · fetchDetail 内部根据状态决定是否 startPolling, 终态任务不会起 poll.
   usePageRefresh(() => {
     if (!taskId) {
       setErr('参数缺失 · taskId')
@@ -72,16 +138,8 @@ export default function TaskDetailPage() {
     fetchDetail()
   })
 
-  // S2 · 页面被背景化 (用户 navigateTo 跳其它页 或 切到微信后台) 时必须暂停轮询,
-  //      否则每 3 秒会持续打空 /queue-status 一直到用户手动返回 或 页面真 unload.
-  //      后端压力 + 不要流量浪费 + 拦截器在后台碰到 40002 会误弹 redirect toast.
-  useDidHide(() => {
-    stopPolling()
-  })
-
-  useUnload(() => {
-    stopPolling()
-  })
+  useDidHide(() => stopPolling())
+  useUnload(() => stopPolling())
 
   function stopPolling() {
     if (pollTimer.current) {
@@ -96,9 +154,6 @@ export default function TaskDetailPage() {
       try {
         const qs = await getQueueStatus(taskId)
         const cur = detailRef.current
-        // 状态变化或尚未拉到详情 → 拉详情; 否则只同步 queueNo / waitMinutes.
-        //   FIX · 原本不更新 queueNo, 导致用户排在队列里前进 (比如 5 → 3)
-        //         界面一直显 5 直到状态切到 running. 现按 qs 直接 delta 应用.
         if (!cur || qs.taskStatus !== cur.taskStatus) {
           const d = await getTaskDetail(taskId)
           applyDetail(d)
@@ -117,7 +172,7 @@ export default function TaskDetailPage() {
           if (isTerminal(qs.taskStatus)) stopPolling()
         }
       } catch {
-        // 忽略一次轮询错 · 不中断
+        /* swallow single poll error */
       }
     }, 3000)
   }
@@ -128,9 +183,7 @@ export default function TaskDetailPage() {
     try {
       const d = await getTaskDetail(taskId)
       applyDetail(d)
-      if (!isTerminal(d.taskStatus)) {
-        startPolling()
-      }
+      if (!isTerminal(d.taskStatus)) startPolling()
     } catch (e) {
       setErr(e instanceof Error ? e.message : '加载失败')
     } finally {
@@ -140,7 +193,6 @@ export default function TaskDetailPage() {
 
   async function handleCancel() {
     if (!detail || !detail.cancelable) return
-    // M4 · ref 瞬时锁, 比 state 早一帧生效
     if (cancellingRef.current) return
     cancellingRef.current = true
     try {
@@ -171,14 +223,13 @@ export default function TaskDetailPage() {
   }
 
   if (err) {
-    // M3 · 失败态给出重试按钮, 避免用户只能退出页面重进
     return (
-      <View className='td-page'>
-        <View className='td-err-box'>
-          <Text className='td-err-box__seal'>§ ERR</Text>
-          <Text className='td-err-box__msg'>{err}</Text>
+      <View className='wo-page'>
+        <View className='wo-err-box'>
+          <Text className='wo-err-box__seal'>§ ERR · 加载失败</Text>
+          <Text className='wo-err-box__msg'>{err}</Text>
           <Button
-            className='td-err-box__retry'
+            className='wo-err-box__retry'
             loading={loading}
             disabled={loading}
             onClick={fetchDetail}
@@ -186,7 +237,7 @@ export default function TaskDetailPage() {
             <Text>{loading ? '重试中…' : '重试 ↻'}</Text>
           </Button>
           <Button
-            className='td-err-box__back'
+            className='wo-err-box__back'
             onClick={() => Taro.navigateBack()}
           >
             <Text>← 返回</Text>
@@ -198,113 +249,180 @@ export default function TaskDetailPage() {
 
   if (!detail && loading) {
     return (
-      <View className='td-page'>
-        <Text className='td-loading'>加载中...</Text>
+      <View className='wo-page'>
+        <Text className='wo-placeholder'>LOADING · 工单读取中</Text>
       </View>
     )
   }
 
   if (!detail) {
     return (
-      <View className='td-page'>
-        <Text className='td-empty'>任务未找到</Text>
+      <View className='wo-page'>
+        <Text className='wo-placeholder'>NOT FOUND · 无此工单</Text>
       </View>
     )
   }
 
-  const activeStepIdx = STATUS_STEPS.indexOf(detail.taskStatus as TaskStatusValue)
+  // --- 计算当前激活段 + 是否展示审核段 ---
+  const reviewState = (detail.reviewState || 'none').toLowerCase()
+  const hasReview =
+    reviewState !== 'none' || detail.riskLevel === 'high' || detail.riskLevel === 'medium'
+  const steps = hasReview ? STEPS_WITH_REVIEW : STEPS_AUTO
+  const activeStep = resolveActiveStep(detail, hasReview)
+  const activeIdx = steps.findIndex((s) => s.key === activeStep)
+
+  const tone = STATUS_TONE[detail.taskStatus as TaskStatusValue] || 'waiting'
+  const isSuccess = detail.taskStatus === 'success'
   const isFailed = detail.taskStatus === 'failed'
   const isCancelled = detail.taskStatus === 'cancelled'
-  const isRunning = detail.taskStatus === 'running'
+  const isReviewRequired = reviewState === 'operator_required'
+
+  // 工单票据编号拆成 T + body (供大号展示)
+  const taskNoHead = detail.taskNo.slice(0, 1)
+  const taskNoBody = detail.taskNo.slice(1)
+
+  const riskTag = (detail.riskLevel || 'low').toUpperCase()
+  const riskReasonList = (detail.riskReasons || '')
+    .split(/[,\s、]+/)
+    .map((s) => s.trim())
+    .filter(Boolean)
 
   return (
-    <View className='td-page'>
-      {/* --- 页头 · Folio 印章 --- */}
-      <View className='td-head'>
-        <Text className='td-head__seal'>§ 04 · 任务详情</Text>
-        <Text className='td-head__title'>{detail.actionName}</Text>
-        <Text className='td-head__lede'>— {detail.taskNo}</Text>
+    <View className='wo-page'>
+      {/* --- 页头 · WORK ORDER --- */}
+      <View className='wo-head'>
+        <View className='wo-head__rule' />
+        <View className='wo-head__row'>
+          <Text className='wo-head__seal'>§ 04 · WORK ORDER</Text>
+          <Text className='wo-head__subtitle'>派 工 单</Text>
+        </View>
+        <View className='wo-head__rule wo-head__rule--double' />
       </View>
 
-      {/* --- 状态块 (左色带 + 墨字) --- */}
-      <View
-        className={`td-status td-status--${
-          detail.taskStatus === 'success'
-            ? 'success'
-            : isFailed
-            ? 'fail'
-            : isCancelled
-            ? 'cancel'
-            : isRunning
-            ? 'running'
-            : 'waiting'
-        }`}
-      >
-        <Text className='td-status__label'>当前状态</Text>
-        <Text className='td-status__value'>
-          {STATUS_LABEL[detail.taskStatus as TaskStatusValue] || detail.taskStatus}
-        </Text>
-        <Text className='td-status__hint'>
-          — {STATUS_HINT[detail.taskStatus as TaskStatusValue]}
-        </Text>
-        {detail.queueNo && !isTerminal(detail.taskStatus as TaskStatusValue) ? (
-          <Text className='td-status__queue'>
-            排队 #{detail.queueNo}
-            {detail.estimatedWaitMinutes
-              ? ` · 约 ${detail.estimatedWaitMinutes} 分钟`
-              : ''}
+      {/* --- 工单编号 · 大号等宽, 像粮票/工单的中央编码 --- */}
+      <View className='wo-ticket'>
+        <Text className='wo-ticket__prefix'>{taskNoHead}</Text>
+        <Text className='wo-ticket__body'>{taskNoBody}</Text>
+      </View>
+      <Text className='wo-ticket-caption'>TASK · NO.</Text>
+
+      {/* --- 动作 + 状态 pill + risk tag --- */}
+      <View className='wo-action'>
+        <View className='wo-action__head'>
+          <Text className='wo-action__title'>{detail.actionName}</Text>
+          <Text className={`wo-action__status wo-action__status--${tone}`}>
+            {STATUS_LABEL[detail.taskStatus as TaskStatusValue] || detail.taskStatus}
+          </Text>
+        </View>
+        <View className='wo-action__sub'>
+          <Text className='wo-action__type'>{detail.actionType}</Text>
+          <Text className='wo-action__dot'>·</Text>
+          <Text className={`wo-action__risk wo-action__risk--${(detail.riskLevel || 'low').toLowerCase()}`}>
+            RISK {riskTag}
+          </Text>
+          {isReviewRequired ? (
+            <>
+              <Text className='wo-action__dot'>·</Text>
+              <Text className='wo-action__risk wo-action__risk--review'>PENDING REVIEW</Text>
+            </>
+          ) : null}
+        </View>
+
+        {riskReasonList.length > 0 ? (
+          <Text className='wo-action__reasons'>
+            { '标记: ' + riskReasonList.join(' · ')}
           </Text>
         ) : null}
       </View>
 
-      {/* --- 进度步骤 (仅非失败/取消时展示) --- */}
-      {!isFailed && !isCancelled ? (
-        <View className='td-steps'>
-          {STATUS_STEPS.map((step, idx) => {
-            const done = idx <= activeStepIdx
-            const current = idx === activeStepIdx
-            return (
-              <View
-                key={step}
-                className={`td-step ${done ? 'td-step--done' : ''} ${
-                  current ? 'td-step--current' : ''
-                }`}
-              >
-                <View className='td-step__dot'>
-                  <Text>{done ? '✓' : idx + 1}</Text>
-                </View>
-                <Text className='td-step__label'>{STATUS_LABEL[step]}</Text>
-              </View>
-            )
-          })}
+      {/* --- 步骤表 (4 或 5 段) --- */}
+      <View className={`wo-steps wo-steps--${steps.length}`}>
+        {steps.map((step, idx) => {
+          const done = idx < activeIdx || (isSuccess && step.key === 'done')
+          const current = idx === activeIdx && !isSuccess
+          const mark = done ? '◼' : current ? '◑' : '◯'
+          return (
+            <View
+              key={step.key}
+              className={[
+                'wo-step',
+                done ? 'wo-step--done' : '',
+                current ? 'wo-step--current' : '',
+              ].filter(Boolean).join(' ')}
+            >
+              <Text className='wo-step__mark'>{mark}</Text>
+              <Text className='wo-step__label'>{step.label}</Text>
+              <Text className='wo-step__sub'>{step.sub}</Text>
+            </View>
+          )
+        })}
+      </View>
+
+      {/* --- 排队提示 · 墨色编号票 --- */}
+      {detail.queueNo && !isTerminal(detail.taskStatus as TaskStatusValue) ? (
+        <View className='wo-queue'>
+          <Text className='wo-queue__key'>QUEUE</Text>
+          <Text className='wo-queue__val'>#{detail.queueNo}</Text>
+          {detail.estimatedWaitMinutes ? (
+            <Text className='wo-queue__sub'>约 {detail.estimatedWaitMinutes} min</Text>
+          ) : null}
         </View>
       ) : null}
 
       {/* --- 失败原因 --- */}
       {isFailed && detail.failReason ? (
-        <View className='td-fail-reason'>
-          <Text className='td-fail-reason__label'>失败原因</Text>
-          <Text className='td-fail-reason__msg'>{detail.failReason}</Text>
+        <View className='wo-fail'>
+          <Text className='wo-fail__seal'>§ FAIL · 失败原因</Text>
+          <Text className='wo-fail__msg'>{detail.failReason}</Text>
         </View>
       ) : null}
 
-      {/* --- 元信息 --- */}
-      <View className='td-meta'>
-        <MetaRow k='任务编号' v={detail.taskNo} mono />
-        <MetaRow k='操作' v={detail.actionName} />
-        <MetaRow k='地块' v={`#${detail.plotId}`} />
-        <MetaRow k='设备' v={`#${detail.deviceId}`} />
-        <MetaRow k='调度模式' v={detail.schedulingMode} />
-        <MetaRow k='提交时间' v={detail.createdAt} mono />
-        {detail.queuedAt ? <MetaRow k='排队时间' v={detail.queuedAt} mono /> : null}
-        {detail.startedAt ? <MetaRow k='开始时间' v={detail.startedAt} mono /> : null}
-        {detail.finishedAt ? <MetaRow k='完成时间' v={detail.finishedAt} mono /> : null}
+      {/* --- 元信息表 · 左栏 key / 右栏 val --- */}
+      <View className='wo-meta'>
+        <MetaRow k='操作'   v={detail.actionName} />
+        <MetaRow k='类型'   v={detail.actionType} mono />
+        <MetaRow k='地块'   v={`#${detail.plotId}`} mono />
+        <MetaRow k='设备'   v={`#${detail.deviceId}`} mono />
+        <MetaRow k='调度'   v={detail.schedulingMode} mono />
+        <MetaRow k='提交'   v={fmtDot(detail.createdAt)} mono />
+        {detail.queuedAt   ? <MetaRow k='排队' v={fmtDot(detail.queuedAt)}   mono /> : null}
+        {detail.startedAt  ? <MetaRow k='开始' v={fmtDot(detail.startedAt)}  mono /> : null}
+        {detail.finishedAt ? <MetaRow k='完成' v={fmtDot(detail.finishedAt)} mono /> : null}
+        {detail.assigneeUserId ? (
+          <MetaRow k='认领' v={`operator#${detail.assigneeUserId}`} mono />
+        ) : null}
       </View>
 
-      {/* --- 操作按钮 --- */}
+      {/* --- 成功 / 失败 / 取消的盖章区 --- */}
+      {isSuccess ? (
+        <View className='wo-stamp wo-stamp--passed'>
+          <Text className='wo-stamp__seal'>§ PASSED</Text>
+          <Text className='wo-stamp__meta'>
+            {detail.finishedAt ? fmtDot(detail.finishedAt) : ''}
+          </Text>
+        </View>
+      ) : null}
+      {isFailed ? (
+        <View className='wo-stamp wo-stamp--fail'>
+          <Text className='wo-stamp__seal'>§ FAIL</Text>
+          <Text className='wo-stamp__meta'>
+            {detail.finishedAt ? fmtDot(detail.finishedAt) : ''}
+          </Text>
+        </View>
+      ) : null}
+      {isCancelled ? (
+        <View className='wo-stamp wo-stamp--void'>
+          <Text className='wo-stamp__seal'>§ VOID</Text>
+          <Text className='wo-stamp__meta'>CANCELLED</Text>
+        </View>
+      ) : null}
+
+      <SectionFin seal='§ 04' meta={detail.taskNo.slice(-8)} time={detail.createdAt?.slice(5, 16)} />
+
+      {/* --- 底部按钮 --- */}
       {detail.cancelable ? (
         <Button
-          className='td-action td-action--cancel'
+          className='wo-action-btn wo-action-btn--cancel'
           loading={cancelling}
           disabled={cancelling}
           onClick={handleCancel}
@@ -314,7 +432,7 @@ export default function TaskDetailPage() {
       ) : null}
 
       <Button
-        className='td-action td-action--back'
+        className='wo-action-btn wo-action-btn--back'
         onClick={() => Taro.navigateBack()}
       >
         <Text>← 返回</Text>
@@ -323,14 +441,20 @@ export default function TaskDetailPage() {
   )
 }
 
-// ---- 小组件: 元信息行 ----
-function MetaRow({ k, v, mono }: { k: string; v: string; mono?: boolean }) {
+function MetaRow({
+  k,
+  v,
+  mono,
+}: {
+  k: string
+  v: string
+  mono?: boolean
+}) {
   return (
-    <View className='meta-row'>
-      <Text className='meta-row__key'>{k}</Text>
-      <Text className={`meta-row__val ${mono ? 'meta-row__val--mono' : ''}`}>
-        {v}
-      </Text>
+    <View className='wo-row'>
+      <Text className='wo-row__key'>{k}</Text>
+      <View className='wo-row__leader' />
+      <Text className={`wo-row__val ${mono ? 'wo-row__val--mono' : ''}`}>{v}</Text>
     </View>
   )
 }
